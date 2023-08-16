@@ -1,0 +1,9 @@
+openapi: 3.0.0
+paths:
+  /approvals/approval-save-personal:
+    post:
+      operationId: e64fb7a787dd0ad49d48c359a381e3f4
+      responses:
+        '200':
+          description: 'An example resource'
+      Request: 'userPersnol data take as input and return if data update successfully then stage else return 0'
