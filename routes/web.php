@@ -109,4 +109,5 @@ Route::get("update-user-data-id", [MigrationController::class, 'updateUserDataId
 Route::get('generate-profile-pdf', [PsDashboardController::class, 'displayProfilePdfs'])->name('pdfprofilessave');
 Route::get('show-multiple-profiles', [PsDashboardController::class, 'CreateProfilePdfs'])->name('showprofilesingroup');
 Route::get('show-multiple-profiless', [PsDashboardController::class, 'CreateProfilePdfss'])->name('showprofilesingroups');
-Route::get('login-hans-users', [UserController::class, 'loginHansUsers']);
+// Route::get('login-hans-users', [UserController::class, 'loginHansUsers']);
+Route::post('login-hans-users', [UserController::class, 'loginHansUserNew'])->name('loginHansUsers');
