@@ -20,18 +20,28 @@
 </head>
 
 <body>
-    <div class="container pdfDiv" id="pdf_data">
-        <div class="row shadow" style="/* height: 99vh;  */ page-break-after: always;">
+    <div class="container border overflow-hidden ">
+        <div class="row pb-4 pt-4 " style="  */ page-break-after: always;">
+            <div class="col-md-12 text-center mb-6">
+                <img src="{{ url('images/makeajodi.png') }}" class="main-banner-img mt-3 w-75" alt="">
+               
+            </div>
+        </div>
+        <div class="container pdfDiv" id="pdf_data">
+        </div>
+
+            {{-- copied from top --}}
+        <div class="row " >
             <div class="col-md-12 text-center">
-                <img src="{{ url('images/hans_logo.png') }}" class="main-banner-img mt-3 w-75" alt="">
-                <h4 class="d-none">Twango Social Network Pvt. Ltd.</h4>
-                <hr>
+               
+                {{-- <h4 class="d-none">Twango Social Network Pvt. Ltd.</h4> --}}
+                
                 <div class="row mt-5 shadow-sm text-center">
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5> Website: www.hansmatrimony.com</h5>
+                        <h5> Website: www.makeajodi.com</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5>Mail us at : info@hansmatrimony.com</h5>
+                        <h5>Mail us at : info@makeajodi.com</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
                         <h5>Add : H-18 Bali Nagar, New Delhi</h5>
@@ -41,13 +51,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 text-center mt-2">
+            {{-- <div class="col-md-12 text-center mt-2">
                 <img src="{{ url('images/1e1ef807efe66d39bc6b9402d0f1d62b_collage_450.jpg') }}" alt=""
                     class="img-thumbnail rounded" style="height: 650px; width: auto">
                 <h5 class="mt-5 d-none">Dear Shubham Bhatia Please Find the Attached Profiles As Per Your Requirement
                 </h5>
-            </div>
-            <div class="col-md-12 border-bottom border-top" style="height: 80px;">
+            </div> --}}
+            <div class="col-md-12  border-top" style="height: 80px;">
                 <div class="row pt-3">
                     <div class="col-sm-2 text-center">
                         <a href="https://www.facebook.com/HansMatrimony" class="btn"><i class="fa fa-2x fa-facebook"
@@ -93,7 +103,7 @@
         }
 
         .watermark {
-            background: url("{{ url('images/logo-sm-dark.png') }}") center center no-repeat;
+            background: url("{{ url('images/makeajodi.png') }}") center center no-repeat;
             opacity: 0.1;
             opacity: 0.1;
             position: absolute;
