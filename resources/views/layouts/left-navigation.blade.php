@@ -19,7 +19,7 @@
                         <img src="{{ url('/images/logo-sm.png') }}" alt="" height="40">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ url('/images/logo-light.png') }}" alt="" height="35">
+                        <img src="{{ url('/images/makeajodi.png') }}" alt="" height="35">
                     </span>
                 </a>
             </div>
@@ -126,9 +126,13 @@
                         <li>
                             <a href="{{ route('todaysfollowup') }}">Today's Followup</a>
                         </li>
+                        @if (Auth::user()->role == config('constants.roles_ineger')['admin'] )
                         <li>
                             <a href="{{ route('sampleprofile') }}">Sample Profile</a>
                         </li>
+                        @endif
+
+                        
                         <li>
                             <a href="{{ route('myappoitments') }}">Appointments</a>
                         </li>

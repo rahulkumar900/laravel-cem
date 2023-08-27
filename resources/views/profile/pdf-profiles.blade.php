@@ -44,10 +44,10 @@
                         <h5>Mail us at : info@makeajodi.com</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5>Add : H-18 Bali Nagar, New Delhi</h5>
+                        <h5>Add :  Karol Bagh, New Delhi-110005</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5>Contact : +91 969 798 9697</h5>
+                        <h5>Contact : +91 959 901 8647</h5>
                     </div>
                 </div>
             </div>
