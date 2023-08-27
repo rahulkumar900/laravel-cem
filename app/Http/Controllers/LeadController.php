@@ -36,6 +36,19 @@ class LeadController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function listAllUnAssignedLeads(){
+        $income_ranges = config('constants.income_ranges');
+        return view('crm.unassigned-leads', compact("income_ranges"));
+    }
+
+
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -220,6 +233,104 @@ class LeadController extends Controller
         );
 
         return response()->json($dataset);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function showUnAssignedLeads(Request $request){
+
+
+        $today = date('Y-m-d');
+        $lead_data = array();
+
+
+        // Fetching Leads Details //////////////////////////////////
+
+        $lead_details = Cache::remember('all_leads', 1, function () {
+           
+         
+
+            $startDate = '2023-02-01';
+            $endDate = '2023-03-31';
+            $arrayOfStatus = [0, 2];
+            
+           return Lead::where('assign_to', 'online')
+                ->where('assign_by', 'online')
+                ->whereIn('is_done', $arrayOfStatus)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy('mobile')
+                ->select('id','name', 'mobile','is_done','assign_to','assign_by', 'created_at')
+                ->get();
+
+
+        });
+
+
+
+        
+       
+        // data Feaching Block End Here
+        
+
+foreach ($lead_details as $lead_detail) {
+
+
+    $templeId = 343243242342;
+
+// //    $assign_to_me_button =  <button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button>
+  $assign_to_me_button =  '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['id'] . " " .  '"key="' . $lead_detail['id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
+
+  $status = '';
+  $isDone = $lead_detail->is_done;
+  if($isDone == '0'){
+    $status  ='Open';
+  }elseif ($isDone == '1') {
+    $status = 'Converted';
+  }else {
+    $status = 'Rejected';
+  }
+
+
+
+
+    $lead_data[] = array(
+        'lead_name'             =>          $lead_detail->name,
+        'mobile'                =>          $lead_detail->mobile,
+        'status'                =>          $status,     
+        'assign_to'             =>          Auth::user()->name,
+        'assigned_to'           =>          $lead_detail->assign_to,
+        'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
+        'assign_to_me'          =>          $assign_to_me_button,
+    );
+}
+
+
+
+$dataset = array(
+    "echo" => 1,
+    "totalrecords" => count($lead_data),
+    "totaldisplayrecords" => count($lead_data),
+    "data" => $lead_data,
+    "test" => Auth::user()->temple_id
+);
+
+// dd($dataset);
+return response()->json($dataset);
+
+
+
+
+
+
+
+
+
+
+
     }
 
     public function subSeenView()

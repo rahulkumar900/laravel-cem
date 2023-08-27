@@ -83,6 +83,9 @@
                                         <a href="{{ route('crmleads') }}">Leads</a>
                                     </li>
                                     <li>
+                                        <a href="{{ route('unassigned-leads') }}">UnAssigned Leads</a>
+                                    </li>
+                                    <li>
                                         <a href="{{ route('renwaalnupgrade') }}">Renewal & Upgradation</a>
                                     </li>
                                     <li>
