@@ -28,10 +28,10 @@
                 <hr>
                 <div class="row mt-5 shadow-sm text-center">
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5> Website: www.hansmatrimony.com</h5>
+                        <h5> Website: www.makeajodi.com</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5>Mail us at : info@hansmatrimony.com</h5>
+                        <h5>Mail us at : info@makeajodi.com</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
                         <h5>Add : H-18 Bali Nagar, New Delhi</h5>
@@ -93,12 +93,13 @@
         }
 
         .watermark {
-            background: url("{{ url('images/logo-sm-dark.png') }}") center center no-repeat;
+            background: url("{{ url('images/makeajodi.png') }}") center center no-repeat;
             opacity: 0.1;
             opacity: 0.1;
             position: absolute;
             width: 100%;
             height: 100%;
+            object-fit: cover;
         }
 
         @media print {

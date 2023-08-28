@@ -911,12 +911,12 @@ class LeadController extends Controller
         ]);
 
         $save_family = LeadFamily::create([
-            "lead_id"       =>      $save_lead->id
+            "lead_id" => $save_lead->id
         ]);
 
         // create compatblity
         $creat_compatblity = Compatibility::create([
-            "user_data_id"      =>      $save_user_data->id
+            "user_data_id" => $save_user_data->id
         ]);
 
         //save Lead Preference
