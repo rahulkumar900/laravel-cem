@@ -462,4 +462,20 @@ class UserController extends Controller
             }
         }
     }
+
+    public function loginHansUserNew(Request $request){
+        $auth_attempt = Auth::attempt(['mobile' => $request->mobile, 'password' => $request->password]);
+        if ($auth_attempt) {
+            $user_detail = User::where('mobile',$request->mobile)->first();
+            Auth::loginUsingId($user_detail->id);
+            $type = true;
+            $message = 'login success';
+        } else {
+            $type = false;
+            $message = 'login failed. Email or Password is Incorrect';
+        }
+        return response()->json(['type' => $type, 'message' => $message]);
+
+       
+    }
 }

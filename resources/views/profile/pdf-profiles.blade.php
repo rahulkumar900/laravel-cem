@@ -20,12 +20,22 @@
 </head>
 
 <body>
-    <div class="container pdfDiv" id="pdf_data">
-        <div class="row shadow" style="/* height: 99vh;  */ page-break-after: always;">
+    <div class="container border overflow-hidden ">
+        <div class="row pb-4 pt-4 " style="  */ page-break-after: always;">
+            <div class="col-md-12 text-center mb-6">
+                <img src="{{ url('images/makeajodi.png') }}" class="main-banner-img mt-3 w-75" alt="">
+               
+            </div>
+        </div>
+        <div class="container pdfDiv" id="pdf_data">
+        </div>
+
+            {{-- copied from top --}}
+        <div class="row " >
             <div class="col-md-12 text-center">
-                <img src="{{ url('images/hans_logo.png') }}" class="main-banner-img mt-3 w-75" alt="">
-                <h4 class="d-none">Twango Social Network Pvt. Ltd.</h4>
-                <hr>
+               
+                {{-- <h4 class="d-none">Twango Social Network Pvt. Ltd.</h4> --}}
+                
                 <div class="row mt-5 shadow-sm text-center">
                     <div class="col-md-6 mb-3 p-2 ">
                         <h5> Website: www.makeajodi.com</h5>
@@ -34,20 +44,20 @@
                         <h5>Mail us at : info@makeajodi.com</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5>Add : H-18 Bali Nagar, New Delhi</h5>
+                        <h5>Add :  Karol Bagh, New Delhi-110005</h5>
                     </div>
                     <div class="col-md-6 mb-3 p-2 ">
-                        <h5>Contact : +91 969 798 9697</h5>
+                        <h5>Contact : +91 959 901 8647</h5>
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 text-center mt-2">
+            {{-- <div class="col-md-12 text-center mt-2">
                 <img src="{{ url('images/1e1ef807efe66d39bc6b9402d0f1d62b_collage_450.jpg') }}" alt=""
                     class="img-thumbnail rounded" style="height: 650px; width: auto">
                 <h5 class="mt-5 d-none">Dear Shubham Bhatia Please Find the Attached Profiles As Per Your Requirement
                 </h5>
-            </div>
-            <div class="col-md-12 border-bottom border-top" style="height: 80px;">
+            </div> --}}
+            <div class="col-md-12  border-top" style="height: 80px;">
                 <div class="row pt-3">
                     <div class="col-sm-2 text-center">
                         <a href="https://www.facebook.com/HansMatrimony" class="btn"><i class="fa fa-2x fa-facebook"
@@ -93,7 +103,7 @@
         }
 
         .watermark {
-            background: url("{{ url('images/logo-sm-dark.png') }}") center center no-repeat;
+            background: url("{{ url('images/makeajodi.png') }}") center center no-repeat;
             opacity: 0.1;
             opacity: 0.1;
             position: absolute;
@@ -259,7 +269,7 @@
                                                     </tr>
                                                         <tr>
                                                             <th>Name</th>
-                                                            <td>${userDetails.name!=null?userDetails.name:'N.A.'}</td>
+                                                            <td>${userDetails.name!=null? `${userDetails.name.split(' ')[0].charAt(0).toUpperCase()}. ${userDetails.name.split(' ')[userDetails.name.split(' ').length - 1]}`:'N.A.'}</td>
                                                             <th>Gender</th>
                                                             <td colspan="3">${userDetails.gender!=null?userDetails.gender:'N.A.'}</td>
                                                         </tr>
@@ -313,14 +323,12 @@
                                                     <tr>
                                                         <th colspan="4" class="text-center">Professional Details</th>
                                                     </tr>
-                                                    <tr>
-                                                            
+                                                        <tr>
                                                             <th>Highest Degree</th>
                                                             <td>${userDetails.education!=null?userDetails.education:'N.A.'}</td>
                                                             <th>Occupation</th>
                                                             <td>${userDetails.occupation!=null?userDetails.occupation:'N.A.'}</td>
-                                                        </tr>
-                                                        `
+                                                        </tr>`
                             if (userDetails.college_ug != null && userDetails.education_ug != null) {
                                 htmlData +=
                                     ` <tr>                                                            
@@ -340,8 +348,7 @@
                                                         </tr>`
                             }
 
-                            htmlData +=
-                                `
+                            htmlData += `
                                                         <tr>
                                                           
                                                             <th>Working City</th>
@@ -377,6 +384,7 @@
                             htmlData += `</td>
                                                         </tr>
                                                         <tr>
+                                                           
                                                         <th>Company Name</th>
                                                         <td>${userDetails.company!=null?userDetails.company:'N.A.'}</td>
                                                         <th>Designation</th>
@@ -437,9 +445,9 @@
                                             </div>`;
                         }
                         $('.pdfDiv').append(htmlData);
-                        $("#pdf_data").ready(function() {
-                            window.print();
-                        });
+                        // $("#pdf_data").ready(function() {
+                        //     window.print();
+                        // });
                     }
                 });
             }
