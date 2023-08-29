@@ -801,7 +801,7 @@
                     [5, "desc"]
                 ],
                 "processing": true,
-                "ajax": "{{ route('allunassignedleads') }}",
+                "ajax": "{{ route('getAllUnAssignedLeads') }}",
                 "columns": [
                     {
                         data: 'lead_name',
@@ -1068,6 +1068,7 @@
                                     lead_mobile + '">Add This To Lead</a></div>');
                             }
                         }
+                        
                     });
                 }
             });

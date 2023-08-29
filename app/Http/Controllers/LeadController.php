@@ -41,7 +41,8 @@ class LeadController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function listAllUnAssignedLeads(){
+    public function listAllUnAssignedLeads()
+    {
         $income_ranges = config('constants.income_ranges');
         return view('crm.unassigned-leads', compact("income_ranges"));
     }
@@ -62,6 +63,7 @@ class LeadController extends Controller
         // check if admin login or user login
         if (Auth::user()->temple_id != 'admin') {
             $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+
                 ->where(['is_done' => 0, 'leads.assign_to' => Auth::user()->temple_id])->orderBy('created_at', 'desc')
                 ->get([
                     'leads.assign_to', 'user_data.name as lead_name', 'user_data.created_at', 'leads.followup_call_on', 'leads.comments',
@@ -241,96 +243,80 @@ class LeadController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function showUnAssignedLeads(Request $request){
-
-
+    public function showUnAssignedLeads(Request $request)
+    {
         $today = date('Y-m-d');
         $lead_data = array();
-
-
         // Fetching Leads Details //////////////////////////////////
+        $startDate = '2023-02-01';
+        $endDate = '2023-03-31';
+        $arrayOfStatus = [0, 2];
+        // check if admin login or user login
+        if (Auth::user()->temple_id != 'admin') {
 
-        $lead_details = Cache::remember('all_leads', 1, function () {
-           
-         
-
-            $startDate = '2023-02-01';
-            $endDate = '2023-03-31';
-            $arrayOfStatus = [0, 2];
-            
-           return Lead::where('assign_to', 'online')
-                ->where('assign_by', 'online')
+            $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+                ->where(['leads.assign_to' => 'online', 'user_data.temple_id' => 'online'])
                 ->whereIn('is_done', $arrayOfStatus)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->groupBy('mobile')
-                ->select('id','name', 'mobile','is_done','assign_to','assign_by', 'created_at')
-                ->get();
+                ->orderBy('created_at', 'desc')
+                ->get([
+                    'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
+                    'leads.id as lead_id', 'user_data.user_mobile',
+                    'leads.assign_to as temple_id', 'user_data_id', 'assigned_at',
+                ]);
+        } else {
+            $lead_details = Cache::remember('all_leads', 1, function () {
+                $today = date('Y-m-d');
+                //$sixmonths = date('Y-m-d',strtotime("-1 Months"));
+                return Lead::with(array(
+                    'users' => function ($query) {
+                        $query->select('temple_id', 'name');
+                    },
+                ))
+                    ->join('user_data', 'leads.user_data_id', 'user_data.id')
+                    ->where(['is_done' => 0])->whereRaw("DATE(leads.followup_call_on) <= '$today' AND leads.assign_to != '' ")->where('leads.assign_to', Auth::user()->temple_id)->orderBy('created_at', 'desc')
+                    ->get(['leads.assign_to', 'user_data.name as lead_name', 'leads.is_done', 'user_data.created_at', 'leads.id', 'user_data.user_mobile', 'leads.assign_to as temple_id']);
+            });
+        }
 
-
-        });
-
-
-
-        
-       
         // data Feaching Block End Here
+
+        foreach ($lead_details as $lead_detail) {
+
+            $templeId = Auth::user()->temple_id;
+
+            //    $assign_to_me_button =  <button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button>
+            $assign_to_me_button =  '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['lead_id'] . ' "key="' . $lead_detail['lead_id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
+            $status = '';
+            $isDone = $lead_detail->is_done;
+            if ($isDone == '0') {
+                $status  = 'Open';
+            } elseif ($isDone == '1') {
+                $status = 'Converted';
+            } else {
+                $status = 'Rejected';
+            }
+
+            $lead_data[] = array(
+                'lead_name'             =>          $lead_detail->lead_name,
+                'mobile'                =>          $lead_detail->user_mobile,
+                'status'                =>          $status,
+                'assigned_to'           =>          $lead_detail->temple_id,
+                'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
+                'assign_to_me'          =>          $assign_to_me_button,
+            );
+        }
+
+
+
+        $dataset = array(
+            "echo" => 1,
+            "totalrecords" => count($lead_data),
+            "totaldisplayrecords" => count($lead_data),
+            "data" => $lead_data,
+            "test" => Auth::user()->temple_id
+        );
         
-
-foreach ($lead_details as $lead_detail) {
-
-
-    $templeId = 343243242342;
-
-// //    $assign_to_me_button =  <button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button>
-  $assign_to_me_button =  '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['id'] . " " .  '"key="' . $lead_detail['id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
-
-  $status = '';
-  $isDone = $lead_detail->is_done;
-  if($isDone == '0'){
-    $status  ='Open';
-  }elseif ($isDone == '1') {
-    $status = 'Converted';
-  }else {
-    $status = 'Rejected';
-  }
-
-
-
-
-    $lead_data[] = array(
-        'lead_name'             =>          $lead_detail->name,
-        'mobile'                =>          $lead_detail->mobile,
-        'status'                =>          $status,     
-        'assign_to'             =>          Auth::user()->name,
-        'assigned_to'           =>          $lead_detail->assign_to,
-        'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
-        'assign_to_me'          =>          $assign_to_me_button,
-    );
-}
-
-
-
-$dataset = array(
-    "echo" => 1,
-    "totalrecords" => count($lead_data),
-    "totaldisplayrecords" => count($lead_data),
-    "data" => $lead_data,
-    "test" => Auth::user()->temple_id
-);
-
-// dd($dataset);
-return response()->json($dataset);
-
-
-
-
-
-
-
-
-
-
-
+        return response()->json($dataset);
     }
 
     public function subSeenView()
@@ -1123,8 +1109,9 @@ return response()->json($dataset);
     public function assignToMe(Request $request)
     {
         $temple_name = Auth::user()->name;
-        // dd($temple_name);
+        dd($temple_name);
         $update_assign_to = Lead::assignToMe(Auth::user()->temple_id, $request->lead_id, $temple_name);
+
         if ($update_assign_to) {
             $update_profile = DB::table("user_data")->where("id", $request->lead_id)->update(["temple_id" => Auth::user()->temple_id]);
             return response()->json(["type" => true, 'message' => 'assigned']);
