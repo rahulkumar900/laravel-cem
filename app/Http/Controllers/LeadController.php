@@ -245,11 +245,11 @@ class LeadController extends Controller
 
     public function showUnAssignedLeads(Request $request)
     {
-        $today = date('Y-m-d');
+        // $today = date('Y-m-d');
         $lead_data = array();
         // Fetching Leads Details //////////////////////////////////
-        $startDate = '2023-02-01';
-        $endDate = '2023-03-31';
+        // $startDate = '2023-02-01';
+        // $endDate = '2023-03-31';
         $arrayOfStatus = [0, 2];
         // check if admin login or user login
 
@@ -262,14 +262,14 @@ class LeadController extends Controller
             ->get([
                 'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
                 'user_data.id as lead_id', 'user_data.user_mobile',
-                'leads.assign_to as temple_id', 'user_data_id', 'assigned_at',
+                'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
             ]);
 
             // dd($lead_details);
 
 
         // data Feaching Block End Here
-
+        $i = 0;
         foreach ($lead_details as $lead_detail) {
 
             $templeId = Auth::user()->temple_id;
@@ -294,6 +294,7 @@ class LeadController extends Controller
                 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
                 'assign_to_me'          =>          $assign_to_me_button,
             );
+            $i++;
         }
 
 
@@ -305,6 +306,8 @@ class LeadController extends Controller
             "data" => $lead_data,
             "test" => Auth::user()->temple_id
         );
+
+        dd($dataset);
 
         return response()->json($dataset);
     }

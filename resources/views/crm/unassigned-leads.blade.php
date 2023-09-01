@@ -37,8 +37,6 @@
                                 <th>Assigned To</th>
                                 <th>Created At</th>
                                 <th>Assign To</th>
-                                
-
                             </tr>
                         </thead>
                         <tbody>
