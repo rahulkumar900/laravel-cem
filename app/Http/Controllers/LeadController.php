@@ -252,31 +252,21 @@ class LeadController extends Controller
         $endDate = '2023-03-31';
         $arrayOfStatus = [0, 2];
         // check if admin login or user login
-        if (Auth::user()->temple_id != 'admin') {
 
-            $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
-                ->where(['leads.assign_to' => 'online', 'user_data.temple_id' => 'online'])
-                ->whereIn('is_done', $arrayOfStatus)
-                ->orderBy('created_at', 'desc')
-                ->get([
-                    'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
-                    'leads.id as lead_id', 'user_data.user_mobile',
-                    'leads.assign_to as temple_id', 'user_data_id', 'assigned_at',
-                ]);
-        } else {
-            $lead_details = Cache::remember('all_leads', 1, function () {
-                $today = date('Y-m-d');
-                //$sixmonths = date('Y-m-d',strtotime("-1 Months"));
-                return Lead::with(array(
-                    'users' => function ($query) {
-                        $query->select('temple_id', 'name');
-                    },
-                ))
-                    ->join('user_data', 'leads.user_data_id', 'user_data.id')
-                    ->where(['is_done' => 0])->whereRaw("DATE(leads.followup_call_on) <= '$today' AND leads.assign_to != '' ")->where('leads.assign_to', Auth::user()->temple_id)->orderBy('created_at', 'desc')
-                    ->get(['leads.assign_to', 'user_data.name as lead_name', 'leads.is_done', 'user_data.created_at', 'leads.id', 'user_data.user_mobile', 'leads.assign_to as temple_id']);
-            });
-        }
+
+        $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+            // ->where(['leads.assign_to' => 'online', 'user_data.temple_id' => 'online'])
+            ->where('leads.assign_to','online')
+            ->whereIn('is_done', $arrayOfStatus)
+            ->orderBy('created_at', 'desc')
+            ->get([
+                'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
+                'user_data.id as lead_id', 'user_data.user_mobile',
+                'leads.assign_to as temple_id', 'user_data_id', 'assigned_at',
+            ]);
+
+            // dd($lead_details);
+
 
         // data Feaching Block End Here
 
@@ -315,7 +305,7 @@ class LeadController extends Controller
             "data" => $lead_data,
             "test" => Auth::user()->temple_id
         );
-        
+
         return response()->json($dataset);
     }
 
@@ -1109,14 +1099,14 @@ class LeadController extends Controller
     public function assignToMe(Request $request)
     {
         $temple_name = Auth::user()->name;
-        dd($temple_name);
+        // dd($temple_name);
+        // dd($request->lead_id);
         $update_assign_to = Lead::assignToMe(Auth::user()->temple_id, $request->lead_id, $temple_name);
-
         if ($update_assign_to) {
             $update_profile = DB::table("user_data")->where("id", $request->lead_id)->update(["temple_id" => Auth::user()->temple_id]);
-            return response()->json(["type" => true, 'message' => 'assigned']);
+            return  response()->json(["type" => true, 'message' => 'assigned']);
         } else {
-            return response()->json(["type" => false, 'message' => 'failed to assign']);
+            return  response()->json(["type" => false, 'message' => 'failed to assign']);
         }
     }
 

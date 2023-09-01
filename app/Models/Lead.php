@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 //use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Lead extends Model
 {
@@ -267,6 +268,7 @@ class Lead extends Model
         $lead_details->assign_by = $temple_id;
         $lead_details->assign_to = $temple_id;
         $lead_details->is_done = $lead_status;
+        $lead_details->assigned_at = Carbon::now();
         $lead_details->comments  = $lead_details->comments . "  $date_curr :- Lead Move from online to $temple_name_mod;";
         $lead_details->save();
         return $lead_details;
