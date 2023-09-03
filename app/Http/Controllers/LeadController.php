@@ -288,12 +288,6 @@ class LeadController extends Controller
             }
 
             $lead_data[] = array(
-                // 'lead_name'             =>         "developer",
-                // 'mobile'                =>         "9952412256",
-                // 'status'                =>          "open",
-                // 'assigned_to'           =>         "me",
-                // 'created_at'            =>         "12-21-2023",
-                // 'assign_to_me'          =>         "Button",
                 'lead_name'             =>          $lead_detail->lead_name,
                 'mobile'                =>          $lead_detail->user_mobile,
                 'status'                =>          $status,
@@ -303,6 +297,7 @@ class LeadController extends Controller
             );
 
             $i++;
+
         }
 
 
