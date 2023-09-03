@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Carbon;
 
 class LeadController extends Controller
 {
@@ -274,9 +275,9 @@ class LeadController extends Controller
 
             $templeId = Auth::user()->temple_id;
 
-            //    $assign_to_me_button =  <button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button>
+            // $assign_to_me_button =  <button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button>
             $assign_to_me_button =  '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['lead_id'] . ' "key="' . $lead_detail['lead_id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
-            $status = '';
+            $status = 'null';
             $isDone = $lead_detail->is_done;
             if ($isDone == '0') {
                 $status  = 'Open';
@@ -287,13 +288,20 @@ class LeadController extends Controller
             }
 
             $lead_data[] = array(
-                'lead_name'             =>          $lead_detail->lead_name,
-                'mobile'                =>          $lead_detail->user_mobile,
-                'status'                =>          $status,
-                'assigned_to'           =>          $lead_detail->temple_id,
-                'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
-                'assign_to_me'          =>          $assign_to_me_button,
+                'lead_name'             =>         "developer",
+                'mobile'                =>         "9952412256",
+                'status'                =>          "open",
+                'assigned_to'           =>         "me",
+                'created_at'            =>         "12-21-2023",
+                'assign_to_me'          =>         "Button",
+                // 'lead_name'             =>          $lead_detail->lead_name,
+                // 'mobile'                =>          $lead_detail->user_mobile,
+                // 'status'                =>          $status,
+                // 'assigned_to'           =>          $lead_detail->temple_id,
+                // 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
+                // 'assign_to_me'          =>          $assign_to_me_button,
             );
+
             $i++;
         }
 
@@ -307,7 +315,7 @@ class LeadController extends Controller
             "test" => Auth::user()->temple_id
         );
 
-        dd($dataset);
+        // dd($dataset);
 
         return response()->json($dataset);
     }

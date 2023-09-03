@@ -799,7 +799,7 @@
                     [5, "desc"]
                 ],
                 "processing": true,
-                "ajax": "{{ route('getAllUnAssignedLeads') }}",
+                "ajax": "{{route('getAllUnAssignedLeads')}}",
                 "columns": [
                     {
                         data: 'lead_name',
