@@ -37,8 +37,6 @@
                                 <th>Assigned To</th>
                                 <th>Created At</th>
                                 <th>Assign To</th>
-                                
-
                             </tr>
                         </thead>
                         <tbody>
@@ -801,7 +799,7 @@
                     [5, "desc"]
                 ],
                 "processing": true,
-                "ajax": "{{ route('allunassignedleads') }}",
+                "ajax": "{{route('getAllUnAssignedLeads')}}",
                 "columns": [
                     {
                         data: 'lead_name',
@@ -1068,6 +1066,7 @@
                                     lead_mobile + '">Add This To Lead</a></div>');
                             }
                         }
+                        
                     });
                 }
             });
@@ -1111,15 +1110,22 @@
                 var temple_id = $(this).attr('templeId');
                 $.ajax({
                     url: "{{ route('updateassignto') }}",
-                    type: "get",
+                    type: "GET",
                     data: {
                         "temple_id": temple_id,
                         "lead_id": lead_id
                     },
                     success: function(assign_response) {
+                        console.log("clicked");
                         $(".search_crm_lead_mobile").trigger('click');
                         table_data.ajax.reload();
-                    }
+                    }, 
+                    error: function(xhr, status, error) {
+                    // This function is executed if there's an error in the AJAX call
+                    console.log('Error:', status, error);
+
+                    // You can handle the error here, such as displaying an error message
+                }
                 });
             });
 
