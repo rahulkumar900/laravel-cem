@@ -24,8 +24,8 @@ Route::get('all-leads', [LeadController::class, 'showLeadData'])->name('allleads
 
 
 
-Route::get('all-unassigned-leads', [LeadController::class, 'showLeadData'])->name('getAllUnAssignedLeads');
-// Route::get('all-unassigned-leads', [LeadController::class, 'showUnAssignedLeads'])->name('getAllUnAssignedLeads');
+
+Route::get('all-unassigned-leads', [LeadController::class, 'showUnassignLeads'])->name('getAllUnAssignedLeads');
 
 
 
