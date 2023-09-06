@@ -37,6 +37,7 @@
                                 <th>Assigned To</th>
                                 <th>Created At</th>
                                 <th>Assign To</th>
+                                <th>Reject</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -819,7 +820,9 @@
                     {
                         data: 'assign_to_me',
                     },
-                   
+                   {
+                    data: 'reject'
+                   },
                    
                    
                 ]

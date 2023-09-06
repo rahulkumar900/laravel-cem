@@ -246,7 +246,11 @@ class LeadController extends Controller
     public function showUnassignLeads(Request $request)
     {
         $lead_data = array();
+        $chunkSize = 10;
         $arrayOfStatus = [0, 2];
+       
+
+
         $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
             ->where('leads.assign_to','online')
             ->whereIn('is_done', $arrayOfStatus)
@@ -256,13 +260,89 @@ class LeadController extends Controller
                 'user_data.id as lead_id', 'user_data.user_mobile',
                 'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
             ]);
+
+
         // data Feaching Block End Here
         $i = 0;
         $assign_to_me_button = "";
+        $reject_lead_button = "";
         foreach ($lead_details as $lead_detail) {
             $templeId = Auth::user()->temple_id;
-           
+
             $assign_to_me_button = '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['lead_id'] . ' "key="' . $lead_detail['lead_id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
+           
+            // ////////////////////////////////////////////////////////
+
+
+
+
+            
+            // if (Auth::user()->temple_id == $lead_detail->temple_id) {
+                $reject_lead_button = ' <div class="row">
+                    <div class="col-6">
+                        <button type="button"
+                            class="btn btn-sm btn-danger reject_leads waves-effect waves-light"
+                            data-toggle="tooltip" data-placement="top" title="Mark Rejected Lead" lead_id="' . $lead_detail->lead_id . '">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>';
+            // // } else {
+            //     $reject_lead_button = 'Not Allowed';
+            // }
+            //dd($lead_detail->comments);
+            // comments
+           
+          
+
+           
+
+
+// ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             $status = 'null';
             $isDone = $lead_detail->is_done;
             if ($isDone == '0') {
@@ -279,6 +359,7 @@ class LeadController extends Controller
                 'assigned_to'           =>          $lead_detail->temple_id,
                 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
                 'assign_to_me'          =>          $assign_to_me_button,
+                'reject'                =>          $reject_lead_button,
             );
             $i++;
         };
