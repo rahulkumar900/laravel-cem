@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Carbon;
+use Carbon\Carbon;
 
 class LeadController extends Controller
 {
@@ -245,16 +245,17 @@ class LeadController extends Controller
 
     public function showUnassignLeads(Request $request)
     {
+        $startDate = '2023-06-01';
+        $endDate = '2023-06-30';
         $lead_data = array();
-        $chunkSize = 10;
-        $arrayOfStatus = [0, 2];
-       
+        $arrayOfStatus = [0,2];
 
 
         $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
-            ->where('leads.assign_to','online')
+            ->where('leads.assign_to', 'online')
             ->whereIn('is_done', $arrayOfStatus)
-            ->orderBy('created_at', 'desc')
+            ->whereBetween('user_data.created_at', [$startDate, $endDate]) // Adjusted line
+            ->orderBy('leads.created_at', 'desc') // Adjusted line
             ->get([
                 'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
                 'user_data.id as lead_id', 'user_data.user_mobile',
@@ -270,20 +271,20 @@ class LeadController extends Controller
             $templeId = Auth::user()->temple_id;
 
             $assign_to_me_button = '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['lead_id'] . ' "key="' . $lead_detail['lead_id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
-           
+
             // ////////////////////////////////////////////////////////
 
 
 
 
-            
+
             // if (Auth::user()->temple_id == $lead_detail->temple_id) {
-                $reject_lead_button = ' <div class="row">
+            $reject_lead_button = ' <div class="row">
                     <div class="col-6">
                         <button type="button"
                             class="btn btn-sm btn-danger reject_leads waves-effect waves-light"
                             data-toggle="tooltip" data-placement="top" title="Mark Rejected Lead" lead_id="' . $lead_detail->lead_id . '">
-                            <i class="fas fa-trash"></i>
+                            <i class="fas fa-times"></i>
                         </button>
                     </div>
                 </div>';
@@ -292,13 +293,23 @@ class LeadController extends Controller
             // }
             //dd($lead_detail->comments);
             // comments
-           
-          
-
-           
 
 
-// ////////////////////////////////////////////////////////////////////////////////////////
+            $delete_lead_button = ' <div class="row">
+            <div class="col-6">
+                <button type="button"
+                    class="btn btn-sm btn-danger delete_leads waves-effect waves-light"
+                    data-toggle="tooltip" data-placement="top" title="Delete Lead" lead_id="' . $lead_detail->lead_id . '">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>';
+
+
+
+
+
+            // ////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -314,52 +325,26 @@ class LeadController extends Controller
 
             ///////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            $status = 'null';
+            $status = '';
             $isDone = $lead_detail->is_done;
-            if ($isDone == '0') {
+            if ($isDone === '0') {
                 $status  = 'Open';
-            } elseif ($isDone == '1') {
+            } elseif ($isDone === '1') {
                 $status = 'Converted';
             } else {
                 $status = 'Rejected';
             }
+
             $lead_data[] = array(
                 'lead_name'             =>          $lead_detail->lead_name,
                 'mobile'                =>          $lead_detail->user_mobile,
-                'status'                =>          $status,
+                // 'status'                =>          $status,
+                'status' =>                         $lead_detail->is_done,
                 'assigned_to'           =>          $lead_detail->temple_id,
                 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
                 'assign_to_me'          =>          $assign_to_me_button,
                 'reject'                =>          $reject_lead_button,
+                'delete'                =>          $delete_lead_button,
             );
             $i++;
         };

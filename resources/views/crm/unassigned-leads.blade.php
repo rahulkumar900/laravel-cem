@@ -38,6 +38,7 @@
                                 <th>Created At</th>
                                 <th>Assign To</th>
                                 <th>Reject</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -135,7 +136,7 @@
 
     {{-- fix aoppintment modal starts --}}
 
-    <div class="modal fade" id="fix_appointment_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    {{-- <div class="modal fade" id="fix_appointment_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -190,12 +191,12 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- fix aoopintment modal  ends --}}
 
     {{-- next follow up modal starts --}}
 
-    <div class="modal fade" id="next_followup_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    {{-- <div class="modal fade" id="next_followup_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -249,7 +250,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- next follow up modal endss --}}
 
     {{-- search lead modal starts --}}
@@ -617,7 +618,7 @@
     {{-- Add Lead Modal Ends --}}
 
     {{-- send message modal starts --}}
-    <div class="modal fade" id="send_message" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    {{-- <div class="modal fade" id="send_message" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -641,12 +642,12 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- send modal ends --}}
 
 
     <!-- User Details Modal starts -->
-    <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    {{-- <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -755,11 +756,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- user etails modal ends --}}
 
     {{-- alternate modal starts --}}
-    <div class="modal fade" id="add_alternate_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    {{-- <div class="modal fade" id="add_alternate_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -787,7 +788,7 @@
             </div>
         </div>
     </div>
-    {{-- alternate modal ends --}}
+    alternate modal ends --}}
 
 @endsection
 @section('custom-scripts')
@@ -797,9 +798,10 @@
         $(document).ready(function() {
             var table_data = $('#salescrm-table').DataTable({
                 "order": [
-                    [5, "desc"]
+                    [4, "desc"]
                 ],
                 "processing": true,
+                // "serverSide": true,
                 "ajax": "{{route('getAllUnAssignedLeads')}}",
                 "columns": [
                     {
@@ -823,164 +825,167 @@
                    {
                     data: 'reject'
                    },
+                   {
+                    data: 'delete'
+                   },
                    
                    
                 ]
             });
 
-            // send message button
-            $(document).on('click', '.send_whatsapp_message', function(e) {
-                e.preventDefault();
-                $('.form_output_message').html('');
-                let mobile = $(this).attr('mobileNo');
-                $('#custom_w_number').val(mobile);
-                $('#send_message').modal('show');
-            });
+            // // send message button
+            // $(document).on('click', '.send_whatsapp_message', function(e) {
+            //     e.preventDefault();
+            //     $('.form_output_message').html('');
+            //     let mobile = $(this).attr('mobileNo');
+            //     $('#custom_w_number').val(mobile);
+            //     $('#send_message').modal('show');
+            // });
 
-            $(document).on('click', '.add_alterante_no', function(e) {
-                e.preventDefault();
-                $('.form_outputalternate').html('');
-                let userDataId = $(this).attr('mobileNo');
-                $('#user_data_id_alternate').val(userDataId);
-                $('#add_alternate_modal').modal('show');
-            });
+            // $(document).on('click', '.add_alterante_no', function(e) {
+            //     e.preventDefault();
+            //     $('.form_outputalternate').html('');
+            //     let userDataId = $(this).attr('mobileNo');
+            //     $('#user_data_id_alternate').val(userDataId);
+            //     $('#add_alternate_modal').modal('show');
+            // });
 
-            $(document).on('submit', '#add_alternamte_no', function(e) {
-                e.preventDefault();
-                $('.form_outputalternate').html('');
-                $.ajax({
-                    type: $(this).attr('method'),
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    success: function(data_alternate) {
-                        if (data_alternate.type == true) {
-                            $('.form_outputalternate').html(
-                                `<p class="text-success">${data_alternate.message}</p>`);
-                            $('#add_alternamte_no')[0].reset();
-                            $('#add_alternate_modal').modal('hide');
-                            table_data.ajax.reload();
-                        } else {
-                            $('.form_outputalternate').html(
-                                `<p class="text-danger">${data_alternate.message}</p>`);
-                        }
-                    }
-                });
-            });
+            // $(document).on('submit', '#add_alternamte_no', function(e) {
+            //     e.preventDefault();
+            //     $('.form_outputalternate').html('');
+            //     $.ajax({
+            //         type: $(this).attr('method'),
+            //         url: $(this).attr('action'),
+            //         data: $(this).serialize(),
+            //         success: function(data_alternate) {
+            //             if (data_alternate.type == true) {
+            //                 $('.form_outputalternate').html(
+            //                     `<p class="text-success">${data_alternate.message}</p>`);
+            //                 $('#add_alternamte_no')[0].reset();
+            //                 $('#add_alternate_modal').modal('hide');
+            //                 table_data.ajax.reload();
+            //             } else {
+            //                 $('.form_outputalternate').html(
+            //                     `<p class="text-danger">${data_alternate.message}</p>`);
+            //             }
+            //         }
+            //     });
+            // });
 
-            $(document).on('click', '.view_user_profile', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: "{{ route('getuserdatabyid') }}",
-                    type: "get",
-                    data: {
-                        "user_id": $(this).attr('user_data_id')
-                    },
-                    success: function(userResponse) {
-                        let userHeight;
-                        let userFt = parseInt(parseInt(userResponse.height_int) / 12);
-                        let userInch = parseInt(userResponse.height_int) % 12;
-                        userHeight = userFt + "Ft " + userInch + "In";
-                        let userIncome = userResponse.monthly_income;
-                        let birthDate = userResponse.birth_date.split(" ");
-                        $('#profileSendDay').val(userResponse.profile_sent_day);
+            // $(document).on('click', '.view_user_profile', function(e) {
+            //     e.preventDefault();
+            //     $.ajax({
+            //         url: "{{ route('getuserdatabyid') }}",
+            //         type: "get",
+            //         data: {
+            //             "user_id": $(this).attr('user_data_id')
+            //         },
+            //         success: function(userResponse) {
+            //             let userHeight;
+            //             let userFt = parseInt(parseInt(userResponse.height_int) / 12);
+            //             let userInch = parseInt(userResponse.height_int) % 12;
+            //             userHeight = userFt + "Ft " + userInch + "In";
+            //             let userIncome = userResponse.monthly_income;
+            //             let birthDate = userResponse.birth_date.split(" ");
+            //             $('#profileSendDay').val(userResponse.profile_sent_day);
 
-                        $('.imageDisplayArea').html(mainImageHtml);
-                        $('.userCaste').text(userResponse.religion + ' : ' + userResponse
-                            .caste);
-                        $('.userName').text(userResponse.name);
-                        $('.monthlyIncomeUser').text(userIncome + ' LPA');
-                        $('.qualificationUser').text(userResponse.education);
-                        $('.occupationUser').text('Occupation :' + userResponse.occupation);
-                        $('.aboutUser').text(userResponse.about);
-                        $('.userCity').text("Working City : " + userResponse.working_city);
-                        $('.userHeight').text(userHeight);
-                        $('.userWeight').text(userResponse.weight + "KG");
-                        $('.genderUser').text(userResponse.gender);
-                        $('.userMobile').text(userResponse.user_mobile);
-                        $('.birthDateUser').text(birthDate[0]);
-                        $('.foodChoiceUser').text(userResponse.food_choice);
-                        $('.manglikUser').text(userResponse.manglik);
-                        $('.maritalStatusUser').text(userResponse.marital_status);
-                        $('.workingCity').text(userResponse.birth_place);
-                        $('.cityFamily').text(userResponse.city_family);
+            //             $('.imageDisplayArea').html(mainImageHtml);
+            //             $('.userCaste').text(userResponse.religion + ' : ' + userResponse
+            //                 .caste);
+            //             $('.userName').text(userResponse.name);
+            //             $('.monthlyIncomeUser').text(userIncome + ' LPA');
+            //             $('.qualificationUser').text(userResponse.education);
+            //             $('.occupationUser').text('Occupation :' + userResponse.occupation);
+            //             $('.aboutUser').text(userResponse.about);
+            //             $('.userCity').text("Working City : " + userResponse.working_city);
+            //             $('.userHeight').text(userHeight);
+            //             $('.userWeight').text(userResponse.weight + "KG");
+            //             $('.genderUser').text(userResponse.gender);
+            //             $('.userMobile').text(userResponse.user_mobile);
+            //             $('.birthDateUser').text(birthDate[0]);
+            //             $('.foodChoiceUser').text(userResponse.food_choice);
+            //             $('.manglikUser').text(userResponse.manglik);
+            //             $('.maritalStatusUser').text(userResponse.marital_status);
+            //             $('.workingCity').text(userResponse.birth_place);
+            //             $('.cityFamily').text(userResponse.city_family);
 
-                        // family details
-                        $('.userUnmarriedBrothers').text(userResponse.unmarried_brothers);
-                        $('.userUnmarriedSisters').text(userResponse.unmarried_sisters);
-                        $('.userMarriedBrothers').text(userResponse.married_brothers);
-                        $('.userMarriedSisters').text(userResponse.married_sisters);
+            //             // family details
+            //             $('.userUnmarriedBrothers').text(userResponse.unmarried_brothers);
+            //             $('.userUnmarriedSisters').text(userResponse.unmarried_sisters);
+            //             $('.userMarriedBrothers').text(userResponse.married_brothers);
+            //             $('.userMarriedSisters').text(userResponse.married_sisters);
 
-                        $('.userFamilyType').text(userResponse.family_type);
-                        $('.userHouseType').text(userResponse.house_type);
-                        $('.fatherStatusUser').text(userResponse.father_status);
-                        $('.motherStatusUser').text(userResponse.mother_status);
+            //             $('.userFamilyType').text(userResponse.family_type);
+            //             $('.userHouseType').text(userResponse.house_type);
+            //             $('.fatherStatusUser').text(userResponse.father_status);
+            //             $('.motherStatusUser').text(userResponse.mother_status);
 
-                        if (userResponse.photo_url) {
-                            var parsed_url = JSON.parse(userResponse.photo_url);
-                            var mainImageHtml = '';
-                            mainImageHtml +=
-                                `<img src="https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/${parsed_url[0]}" class="w-75">`;
-                        }
-                        $('#userDetailsModal').modal('show');
-                    }
-                });
-            })
+            //             if (userResponse.photo_url) {
+            //                 var parsed_url = JSON.parse(userResponse.photo_url);
+            //                 var mainImageHtml = '';
+            //                 mainImageHtml +=
+            //                     `<img src="https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/${parsed_url[0]}" class="w-75">`;
+            //             }
+            //             $('#userDetailsModal').modal('show');
+            //         }
+            //     });
+            // })
 
-            // send message
-            $(document).on('submit', '#send-message-form', function(e) {
-                e.preventDefault();
-                const messageData = $('#custom_w_message').val();
-                const customerMNo = $('#custom_w_number').val();
-                var settings = {
-                    "url": "https://eazybe.com/api/v1/whatzapp/newCustomerMessageSchedule",
-                    "method": "POST",
-                    "timeout": 0,
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "data": JSON.stringify({
-                        "name": "{{ Auth::user()->mobile }}",
-                        "customer_mobile": customerMNo,
-                        "user_mobile": "{{ Auth::user()->mobile }}",
-                        "messageText": messageData,
-                        "img_src": "undefined",
-                        "scheduledDateTime": "{{ date('Y-m-d H:i:s', strtotime('+5 minutes')) }}",
-                    }),
-                };
+            // // send message
+            // $(document).on('submit', '#send-message-form', function(e) {
+            //     e.preventDefault();
+            //     const messageData = $('#custom_w_message').val();
+            //     const customerMNo = $('#custom_w_number').val();
+            //     var settings = {
+            //         "url": "https://eazybe.com/api/v1/whatzapp/newCustomerMessageSchedule",
+            //         "method": "POST",
+            //         "timeout": 0,
+            //         "headers": {
+            //             "Content-Type": "application/json"
+            //         },
+            //         "data": JSON.stringify({
+            //             "name": "{{ Auth::user()->mobile }}",
+            //             "customer_mobile": customerMNo,
+            //             "user_mobile": "{{ Auth::user()->mobile }}",
+            //             "messageText": messageData,
+            //             "img_src": "undefined",
+            //             "scheduledDateTime": "{{ date('Y-m-d H:i:s', strtotime('+5 minutes')) }}",
+            //         }),
+            //     };
 
-                $.ajax(settings).done(function(response) {
-                    $('.form_output_message').html(
-                        '<div class="alert alert-primary" role="alert"><strong>Success</strong> Message Scheduled Successfully</div>'
-                    );
-                    $('#send-message-form')[0].reset();
-                    window.setTimeout(function() {
-                        $('#send_message').modal('hide');
-                    }, 2000);
-                });
-            });
+            //     $.ajax(settings).done(function(response) {
+            //         $('.form_output_message').html(
+            //             '<div class="alert alert-primary" role="alert"><strong>Success</strong> Message Scheduled Successfully</div>'
+            //         );
+            //         $('#send-message-form')[0].reset();
+            //         window.setTimeout(function() {
+            //             $('#send_message').modal('hide');
+            //         }, 2000);
+            //     });
+            // });
 
-            //fix_appoinemtnt
-            $(document).on('click', '.fix_appoinemtnt', function(e) {
-                e.preventDefault();
-                $('#fix_appointment_modal').modal('show');
-                $('#user_data_id').val($(this).attr('id'));
-            });
+            // //fix_appoinemtnt
+            // $(document).on('click', '.fix_appoinemtnt', function(e) {
+            //     e.preventDefault();
+            //     $('#fix_appointment_modal').modal('show');
+            //     $('#user_data_id').val($(this).attr('id'));
+            // });
 
-            //add_next_followup
-            $(document).on('click', '.add_next_followup', function(e) {
-                e.preventDefault();
-                $('#followup_lead_id').val($(this).attr('lead_id'));
-                $('.followup_message').html('');
-                $('#next_followup_modal').modal('show');
-            });
+            // //add_next_followup
+            // $(document).on('click', '.add_next_followup', function(e) {
+            //     e.preventDefault();
+            //     $('#followup_lead_id').val($(this).attr('lead_id'));
+            //     $('.followup_message').html('');
+            //     $('#next_followup_modal').modal('show');
+            // });
 
-            //send_sample_profile
-            $(document).on('click', '.send_sample_profile', function(e) {
-                e.preventDefault();
-                window.location.href = "{{ route('sampleprofile') }}";
-            });
+            // //send_sample_profile
+            // $(document).on('click', '.send_sample_profile', function(e) {
+            //     e.preventDefault();
+            //     window.location.href = "{{ route('sampleprofile') }}";
+            // });
 
-            //reject_leads
+             //reject_leads
             $(document).on('click', '.reject_leads', function(e) {
                 e.preventDefault();
                 if (confirm('Are you sure to Reject?')) {
@@ -1000,111 +1005,134 @@
                 }
             });
 
-            // saerch lead
-            $(document).on('click', '.search_lead', function(e) {
-                e.preventDefault();
-                $('.search_details').html('');
-                $('#search_mobile_number').val('');
-                $('#search_lead_modal').modal('show');
-            });
 
-            $(document).on('click', '.search_crm_lead_mobile', function(e) {
+
+            // Delete _leads
+            $(document).on('click','.delete_leads',function(e){
                 e.preventDefault();
-                // console.log('test')
-                var lead_mobile = $('#search_mobile_number').val();
-                lead_mobile = lead_mobile.substr(lead_mobile.length - 10, 10)
-                var leads_html = '';
-                $('.search_btn_div').html(
-                    '<div class="spinner-border text-danger m-2" role="status"></div>');
-                if (lead_mobile == '' || lead_mobile.length != 10) {
-                    $('.search_details').html(
-                        '<div class="mt-3 alert alert-danger" role="alert"><strong>Warning</strong> Please Fill Mobile Number Carefully</div>'
-                    );
-                    $('.search_btn_div').html(
-                        ' <button class="btn btn-purple btn-rounded btn-sm waves-effect waves-light search_crm_lead_mobile"><i class="fas fa-search"></i></button>'
-                    );
-                } else {
+                if(confirm('Are you sure you want to delete?'')){
                     $.ajax({
-                        url: "{{ route('searchleads') }}",
-                        type: "get",
-                        data: {
-                            "lead_mobile_no": lead_mobile
+                        url:"{{ site.base_url}}",
+                        type:'get',
+                        data:{
+                            "lead_id":$(this).attr('lead_id'),
                         },
-                        success: function(search_resp) {
-                            $('.search_btn_div').html(
-                                ' <button class="btn btn-purple btn-rounded btn-sm waves-effect waves-light search_crm_lead_mobile"><i class="fas fa-search"></i></button>'
-                            );
-                            if (search_resp.type == true) {
-                                lead_deatsils = search_resp.data.lead_details;
-                                leads_html += `<table class="table table-striped table-inverse">
-                                                    <tr>
-                                                        <th colspan="4">${search_resp.data.heading} Lead Based On Your Search</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Name</th> <td>${lead_deatsils.name}</td>
-                                                        <th>Mobile</th> <td>${lead_deatsils.mobile}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Assigned To</th> <td>${search_resp.data.temple_name}</td>
-                                                        <th>Enquiry Date</th><td>${lead_deatsils.enquiry_date}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Last Followup</th>
-                                                        <td>${lead_deatsils.last_followup_date}</td>
-                                                        <th>Followup Call On</th><td>${lead_deatsils.followup_call_on}</td>
-                                                    </tr>`;
-                                if (search_resp.data.lead_details.assign_to == 'online' ||
-                                    search_resp.data
-                                    .lead_details.assign_by == "online" || search_resp.data
-                                    .lead_details.is_done == 2) {
-                                    leads_html += `<tr>
-                                                        <th colspan="4"><button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button></th>
-                                                </tr>`;
-                                }
-                                leads_html += `</table>`;
-                                $('.search_details').html(leads_html);
-                            } else {
-                                $('.search_details').html(
-                                    '<div class="form-group"><div class="alert alert-danger" role="alert"><strong>No Record Found For This Mobile</strong></div></div><div class="form-group"><a href="#" class="btn btn-sm btn-bordered btn-success waves-effect waves-light add_lead" mobile="' +
-                                    lead_mobile + '">Add This To Lead</a></div>');
+                        success:function(deleteLeadRes){
+                            if (deleLeadResp.type == true) {
+                                alert(deleLeadResp.message);
+                                table_data.ajax.reload();
                             }
                         }
-                        
-                    });
+                    })
                 }
             });
 
-            // add lead
-            $(document).on('click', '.add_lead', function(e) {
-                e.preventDefault();
-                $('.search_details').html('');
-                $('#search_mobile_number').val('');
-                $('#search_lead_modal').modal('hide');
-                $('#new_lead_mobile').val(parseInt($(this).attr('mobile')));
-                $('#security_key').val(localStorage.getItem('security_key'));
-                $('.form_output').html('');
-                $('#add_lead_modal').modal('show');
-            });
 
-            // get crm lead plans
-            getCrmPlans();
+            // // saerch lead
+            // $(document).on('click', '.search_lead', function(e) {
+            //     e.preventDefault();
+            //     $('.search_details').html('');
+            //     $('#search_mobile_number').val('');
+            //     $('#search_lead_modal').modal('show');
+            // });
 
-            function getCrmPlans() {
-                plan_optins = `<option value="">Select Plan</option>`;
-                $.ajax({
-                    url: "{{ route('crmleadplans') }}",
-                    type: "get",
-                    success: function(plan_resp) {
-                        for (let i = 0; i < plan_resp.length; i++) {
-                            const plan_amounts = plan_resp[i];
-                            var plan_name = plan_amounts.type.split("_");
-                            plan_optins +=
-                                `<option value="${plan_name[0]}">${plan_name[0]}</option>`;
-                        }
-                        $('#plan_id').html(plan_optins);
-                    }
-                });
-            }
+            // $(document).on('click', '.search_crm_lead_mobile', function(e) {
+            //     e.preventDefault();
+            //     // console.log('test')
+            //     var lead_mobile = $('#search_mobile_number').val();
+            //     lead_mobile = lead_mobile.substr(lead_mobile.length - 10, 10)
+            //     var leads_html = '';
+            //     $('.search_btn_div').html(
+            //         '<div class="spinner-border text-danger m-2" role="status"></div>');
+            //     if (lead_mobile == '' || lead_mobile.length != 10) {
+            //         $('.search_details').html(
+            //             '<div class="mt-3 alert alert-danger" role="alert"><strong>Warning</strong> Please Fill Mobile Number Carefully</div>'
+            //         );
+            //         $('.search_btn_div').html(
+            //             ' <button class="btn btn-purple btn-rounded btn-sm waves-effect waves-light search_crm_lead_mobile"><i class="fas fa-search"></i></button>'
+            //         );
+            //     } else {
+            //         $.ajax({
+            //             url: "{{ route('searchleads') }}",
+            //             type: "get",
+            //             data: {
+            //                 "lead_mobile_no": lead_mobile
+            //             },
+            //             success: function(search_resp) {
+            //                 $('.search_btn_div').html(
+            //                     ' <button class="btn btn-purple btn-rounded btn-sm waves-effect waves-light search_crm_lead_mobile"><i class="fas fa-search"></i></button>'
+            //                 );
+            //                 if (search_resp.type == true) {
+            //                     lead_deatsils = search_resp.data.lead_details;
+            //                     leads_html += `<table class="table table-striped table-inverse">
+            //                                         <tr>
+            //                                             <th colspan="4">${search_resp.data.heading} Lead Based On Your Search</th>
+            //                                         </tr>
+            //                                         <tr>
+            //                                             <th>Name</th> <td>${lead_deatsils.name}</td>
+            //                                             <th>Mobile</th> <td>${lead_deatsils.mobile}</td>
+            //                                         </tr>
+            //                                         <tr>
+            //                                             <th>Assigned To</th> <td>${search_resp.data.temple_name}</td>
+            //                                             <th>Enquiry Date</th><td>${lead_deatsils.enquiry_date}</td>
+            //                                         </tr>
+            //                                         <tr>
+            //                                             <th>Last Followup</th>
+            //                                             <td>${lead_deatsils.last_followup_date}</td>
+            //                                             <th>Followup Call On</th><td>${lead_deatsils.followup_call_on}</td>
+            //                                         </tr>`;
+            //                     if (search_resp.data.lead_details.assign_to == 'online' ||
+            //                         search_resp.data
+            //                         .lead_details.assign_by == "online" || search_resp.data
+            //                         .lead_details.is_done == 2) {
+            //                         leads_html += `<tr>
+            //                                             <th colspan="4"><button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="${lead_deatsils.id}" templeId="{{ Auth::user()->temple_id }}">Assign To Me</button></th>
+            //                                     </tr>`;
+            //                     }
+            //                     leads_html += `</table>`;
+            //                     $('.search_details').html(leads_html);
+            //                 } else {
+            //                     $('.search_details').html(
+            //                         '<div class="form-group"><div class="alert alert-danger" role="alert"><strong>No Record Found For This Mobile</strong></div></div><div class="form-group"><a href="#" class="btn btn-sm btn-bordered btn-success waves-effect waves-light add_lead" mobile="' +
+            //                         lead_mobile + '">Add This To Lead</a></div>');
+            //                 }
+            //             }
+                        
+            //         });
+            //     }
+            // });
+
+            // // add lead
+            // $(document).on('click', '.add_lead', function(e) {
+            //     e.preventDefault();
+            //     $('.search_details').html('');
+            //     $('#search_mobile_number').val('');
+            //     $('#search_lead_modal').modal('hide');
+            //     $('#new_lead_mobile').val(parseInt($(this).attr('mobile')));
+            //     $('#security_key').val(localStorage.getItem('security_key'));
+            //     $('.form_output').html('');
+            //     $('#add_lead_modal').modal('show');
+            // });
+
+            // // get crm lead plans
+            // getCrmPlans();
+
+            // function getCrmPlans() {
+            //     plan_optins = `<option value="">Select Plan</option>`;
+            //     $.ajax({
+            //         url: "{{ route('crmleadplans') }}",
+            //         type: "get",
+            //         success: function(plan_resp) {
+            //             for (let i = 0; i < plan_resp.length; i++) {
+            //                 const plan_amounts = plan_resp[i];
+            //                 var plan_name = plan_amounts.type.split("_");
+            //                 plan_optins +=
+            //                     `<option value="${plan_name[0]}">${plan_name[0]}</option>`;
+            //             }
+            //             $('#plan_id').html(plan_optins);
+            //         }
+            //     });
+            // }
 
             // lead assign to self
             $(document).on('click', '.assgn_to_me_btn', function(e) {
@@ -1133,366 +1161,366 @@
             });
 
             // get religion
-            getReligion();
+            // getReligion();
 
-            function getReligion() {
-                religion_html = `<option value="">Select Religion</option>`;
-                $.ajax({
-                    url: "{{ route('allreligion') }}",
-                    type: "get",
-                    success: function(religions) {
-                        for (let i = 0; i < religions.length; i++) {
-                            const religion = religions[i];
-                            religion_html +=
-                                `<option value="${religion.mapping_id}-${religion.religion}">${religion.religion}</option>`;
-                        }
-                        $('#religion').html(religion_html);
-                        $('#religion').val("1-Hindu");
-                    }
-                })
-            }
+            // function getReligion() {
+            //     religion_html = `<option value="">Select Religion</option>`;
+            //     $.ajax({
+            //         url: "{{ route('allreligion') }}",
+            //         type: "get",
+            //         success: function(religions) {
+            //             for (let i = 0; i < religions.length; i++) {
+            //                 const religion = religions[i];
+            //                 religion_html +=
+            //                     `<option value="${religion.mapping_id}-${religion.religion}">${religion.religion}</option>`;
+            //             }
+            //             $('#religion').html(religion_html);
+            //             $('#religion').val("1-Hindu");
+            //         }
+            //     })
+            // }
 
             // select gender automatically
-            $(document).on('change', '#profile_creating_for', function() {
-                if ($(this).val() == "4,Sister" || $(this).val() == "2,Mother" || $(this).val() ==
-                    "7,Daughter") {
-                    $('#lead_gender').val(2);
-                } else if ($(this).val() == "3,Father" || $(this).val() == "5,Brother" || $(this).val() ==
-                    "6,Son") {
-                    $('#lead_gender').val(1);
-                } else {
-                    $('#lead_gender').val(1);
-                }
-            });
+            // $(document).on('change', '#profile_creating_for', function() {
+            //     if ($(this).val() == "4,Sister" || $(this).val() == "2,Mother" || $(this).val() ==
+            //         "7,Daughter") {
+            //         $('#lead_gender').val(2);
+            //     } else if ($(this).val() == "3,Father" || $(this).val() == "5,Brother" || $(this).val() ==
+            //         "6,Son") {
+            //         $('#lead_gender').val(1);
+            //     } else {
+            //         $('#lead_gender').val(1);
+            //     }
+            // });
 
             // submit add lead form
-            $(document).on('submit', '#addLeadForm', function(e) {
-                e.preventDefault();
-                $('.submit_btn_li').html(
-                    '<button class="btn btn-success" type="button" disabled=""><span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>Loading...</button>'
-                );
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: $(this).attr('method'),
-                    data: $(this).serialize(),
-                    success: function(submit_response) {
-                        if (submit_response.type == true) {
-                            var error_html =
-                                '<div class="alert alert-success" role="alert"><strong>Lead Added Successfully</strong></div>';
-                            $('#addLeadForm')[0].reset();
-                            window.setTimeout(() => {
-                                $('#add_lead_modal').modal('hide');
-                                table_data.ajax.reload();
-                            }, 1000);
-                        } else {
-                            var error_html =
-                                '<div class="alert alert-danger" role="alert"><strong>Failed to Add. Try Again</strong></div>';
-                        }
-                        $('.form_output').html(error_html);
-                        $('.submit_btn_li').html(
-                            '<button type="submit" class="btn btn-primary">Submit</button>');
-                    },
-                    error: function(error_response) {
-                        var error_html = '<ul class="text-danger">';
-                        error_string_data = error_response.responseJSON.errors;
-                        $.each(error_string_data, function(key, value) {
-                            error_html += '<li>' + value + '</li>';
-                        });
-                        error_html += '<ul>';
-                        $('.form_output').html(error_html);
-                        $('.submit_btn_li').html(
-                            '<button type="submit" class="btn btn-primary">Submit</button>');
-                    }
-                });
-            });
+            // $(document).on('submit', '#addLeadForm', function(e) {
+            //     e.preventDefault();
+            //     $('.submit_btn_li').html(
+            //         '<button class="btn btn-success" type="button" disabled=""><span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>Loading...</button>'
+            //     );
+            //     $.ajax({
+            //         url: $(this).attr('action'),
+            //         type: $(this).attr('method'),
+            //         data: $(this).serialize(),
+            //         success: function(submit_response) {
+            //             if (submit_response.type == true) {
+            //                 var error_html =
+            //                     '<div class="alert alert-success" role="alert"><strong>Lead Added Successfully</strong></div>';
+            //                 $('#addLeadForm')[0].reset();
+            //                 window.setTimeout(() => {
+            //                     $('#add_lead_modal').modal('hide');
+            //                     table_data.ajax.reload();
+            //                 }, 1000);
+            //             } else {
+            //                 var error_html =
+            //                     '<div class="alert alert-danger" role="alert"><strong>Failed to Add. Try Again</strong></div>';
+            //             }
+            //             $('.form_output').html(error_html);
+            //             $('.submit_btn_li').html(
+            //                 '<button type="submit" class="btn btn-primary">Submit</button>');
+            //         },
+            //         error: function(error_response) {
+            //             var error_html = '<ul class="text-danger">';
+            //             error_string_data = error_response.responseJSON.errors;
+            //             $.each(error_string_data, function(key, value) {
+            //                 error_html += '<li>' + value + '</li>';
+            //             });
+            //             error_html += '<ul>';
+            //             $('.form_output').html(error_html);
+            //             $('.submit_btn_li').html(
+            //                 '<button type="submit" class="btn btn-primary">Submit</button>');
+            //         }
+            //     });
+            // });
 
 
-            loadAllCastes();
+            // loadAllCastes();
 
-            function loadAllCastes() {
-                var caste_html = '<option value="">Select Caste</option>';
-                $.ajax({
-                    url: "{{ route('getallcastes') }}",
-                    type: "get",
-                    success: function(caste_Response) {
-                        for (let k = 0; k < caste_Response.length; k++) {
-                            const caste_list = caste_Response[k];
-                            caste_html +=
-                                `<option value="${caste_list.id},${caste_list.caste ?? caste_list.value}">${caste_list.caste ?? caste_list.value}</option>`;
-                        }
-                        $('#castes').html(caste_html);
-                    }
-                });
-            }
+            // function loadAllCastes() {
+            //     var caste_html = '<option value="">Select Caste</option>';
+            //     $.ajax({
+            //         url: "{{ route('getallcastes') }}",
+            //         type: "get",
+            //         success: function(caste_Response) {
+            //             for (let k = 0; k < caste_Response.length; k++) {
+            //                 const caste_list = caste_Response[k];
+            //                 caste_html +=
+            //                     `<option value="${caste_list.id},${caste_list.caste ?? caste_list.value}">${caste_list.caste ?? caste_list.value}</option>`;
+            //             }
+            //             $('#castes').html(caste_html);
+            //         }
+            //     });
+            // }
 
 
-            loadAllTemples();
+            // loadAllTemples();
 
-            function loadAllTemples() {
-                var temple_html = '<option value="">Select User</option>';
-                var login_user = "{{ Auth::user()->temple_id }}";
-                var temple_id_html = '';
-                $.ajax({
-                    url: "{{ route('getalltemples') }}",
-                    type: "get",
-                    success: function(temple_response) {
-                        for (let l = 0; l < temple_response.length; l++) {
-                            const temple_list = temple_response[l];
-                            if (temple_list.temple_id == login_user) {
-                                temple_html +=
-                                    `<option selected="selected" value="${temple_list.temple_id}">${temple_list.name}</option>`;
-                                temple_id_html +=
-                                    `<option selected="selected" value="${temple_list.id}">${temple_list.name}</option>`;
-                            } else {
-                                temple_html +=
-                                    `<option value="${temple_list.temple_id}">${temple_list.name}</option>`;
-                                temple_id_html +=
-                                    `<option value="${temple_list.id}">${temple_list.name}</option>`;
-                            }
-                        }
-                        $('#assign_to').html(temple_html);
-                        $("#appoinemtn_with").html(temple_id_html);
-                    }
-                });
-            }
+            // function loadAllTemples() {
+            //     var temple_html = '<option value="">Select User</option>';
+            //     var login_user = "{{ Auth::user()->temple_id }}";
+            //     var temple_id_html = '';
+            //     $.ajax({
+            //         url: "{{ route('getalltemples') }}",
+            //         type: "get",
+            //         success: function(temple_response) {
+            //             for (let l = 0; l < temple_response.length; l++) {
+            //                 const temple_list = temple_response[l];
+            //                 if (temple_list.temple_id == login_user) {
+            //                     temple_html +=
+            //                         `<option selected="selected" value="${temple_list.temple_id}">${temple_list.name}</option>`;
+            //                     temple_id_html +=
+            //                         `<option selected="selected" value="${temple_list.id}">${temple_list.name}</option>`;
+            //                 } else {
+            //                     temple_html +=
+            //                         `<option value="${temple_list.temple_id}">${temple_list.name}</option>`;
+            //                     temple_id_html +=
+            //                         `<option value="${temple_list.id}">${temple_list.name}</option>`;
+            //                 }
+            //             }
+            //             $('#assign_to').html(temple_html);
+            //             $("#appoinemtn_with").html(temple_id_html);
+            //         }
+            //     });
+            // }
 
 
             //loadReligion();
 
-            function loadReligion() {
-                var religion_html = '';
-                $.ajax({
-                    type: "get",
-                    url: "{{ route('allreligion') }}",
-                    success: function(religion_resp) {
-                        for (let q = 0; q < religion_resp.length; q++) {
-                            const religsion_data = religion_resp[q];
-                            religion_html +=
-                                `<option value="${religsion_data.mapping_id}-${religsion_data.religion}">${religsion_data.religion}</option>`;
-                        }
-                        $('#religion').html(religion_html);
-                    }
-                });
-            }
+            // function loadReligion() {
+            //     var religion_html = '';
+            //     $.ajax({
+            //         type: "get",
+            //         url: "{{ route('allreligion') }}",
+            //         success: function(religion_resp) {
+            //             for (let q = 0; q < religion_resp.length; q++) {
+            //                 const religsion_data = religion_resp[q];
+            //                 religion_html +=
+            //                     `<option value="${religsion_data.mapping_id}-${religsion_data.religion}">${religsion_data.religion}</option>`;
+            //             }
+            //             $('#religion').html(religion_html);
+            //         }
+            //     });
+            // }
 
-            loadRelation();
+            // loadRelation();
 
-            function loadRelation() {
-                var relation_html = '';
-                $.ajax({
-                    type: "get",
-                    url: "{{ route('getrelation') }}",
-                    success: function(relation_resp) {
-                        for (let p = 0; p < relation_resp.length; p++) {
-                            const relation_data = relation_resp[p];
-                            relation_html +=
-                                `<option value="${relation_data.id},${relation_data.name}">${relation_data.name}</option>`;
-                        }
-                        $('#profile_creating_for').html(relation_html);
-                    }
-                });
-            }
+            // function loadRelation() {
+            //     var relation_html = '';
+            //     $.ajax({
+            //         type: "get",
+            //         url: "{{ route('getrelation') }}",
+            //         success: function(relation_resp) {
+            //             for (let p = 0; p < relation_resp.length; p++) {
+            //                 const relation_data = relation_resp[p];
+            //                 relation_html +=
+            //                     `<option value="${relation_data.id},${relation_data.name}">${relation_data.name}</option>`;
+            //             }
+            //             $('#profile_creating_for').html(relation_html);
+            //         }
+            //     });
+            // }
 
-            loadMaritalStatus();
+            // loadMaritalStatus();
 
-            function loadMaritalStatus() {
-                var marital_status_html = '';
-                $.ajax({
-                    type: "get",
-                    url: "{{ route('getmaritalstatus') }}",
-                    success: function(mstastus_resp) {
-                        for (let o = 0; o < mstastus_resp.length; o++) {
-                            const mstatus_data = mstastus_resp[o];
-                            marital_status_html +=
-                                `<option value="${mstatus_data.marital_status_id},${mstatus_data.name}">${mstatus_data.name}</option>`;
-                        }
-                        $('#marital_status').html(marital_status_html);
-                    }
-                });
-            }
+            // function loadMaritalStatus() {
+            //     var marital_status_html = '';
+            //     $.ajax({
+            //         type: "get",
+            //         url: "{{ route('getmaritalstatus') }}",
+            //         success: function(mstastus_resp) {
+            //             for (let o = 0; o < mstastus_resp.length; o++) {
+            //                 const mstatus_data = mstastus_resp[o];
+            //                 marital_status_html +=
+            //                     `<option value="${mstatus_data.marital_status_id},${mstatus_data.name}">${mstatus_data.name}</option>`;
+            //             }
+            //             $('#marital_status').html(marital_status_html);
+            //         }
+            //     });
+            // }
 
-            loadOccupations();
+            // loadOccupations();
 
-            function loadOccupations() {
-                var occupation_status_html = '';
-                $.ajax({
-                    type: "get",
-                    url: "{{ route('getoccupation') }}",
-                    success: function(occupation_resp) {
-                        for (let n = 0; n < occupation_resp.length; n++) {
-                            const occupation_data = occupation_resp[n];
-                            occupation_status_html +=
-                                `<option value="${occupation_data.id},${occupation_data.name}">${occupation_data.name}</option>`;
-                        }
-                        $('#occupation_list').html(occupation_status_html);
-                    }
-                });
-            }
+            // function loadOccupations() {
+            //     var occupation_status_html = '';
+            //     $.ajax({
+            //         type: "get",
+            //         url: "{{ route('getoccupation') }}",
+            //         success: function(occupation_resp) {
+            //             for (let n = 0; n < occupation_resp.length; n++) {
+            //                 const occupation_data = occupation_resp[n];
+            //                 occupation_status_html +=
+            //                     `<option value="${occupation_data.id},${occupation_data.name}">${occupation_data.name}</option>`;
+            //             }
+            //             $('#occupation_list').html(occupation_status_html);
+            //         }
+            //     });
+            // }
 
-            populateHeight();
+            // populateHeight();
 
-            function populateHeight() {
-                var height_values = '<option value="">Select Height</option>';
-                for (let k = 48; k < 96; k++) {
-                    height_values += `<option value="${k}">${Math.floor(k/12)} Ft ${k%12} In</option>`;
-                }
-                $('#user_height').html(height_values);
-                $('#user_height').val(65);
-            }
+            // function populateHeight() {
+            //     var height_values = '<option value="">Select Height</option>';
+            //     for (let k = 48; k < 96; k++) {
+            //         height_values += `<option value="${k}">${Math.floor(k/12)} Ft ${k%12} In</option>`;
+            //     }
+            //     $('#user_height').html(height_values);
+            //     $('#user_height').val(65);
+            // }
 
-            $(document).on('keyup', '#search_working_city', function() {
-                if ($(this).val().length >= 0) {
-                    var cities_lsit = getCitiesName($(this).val());
-                }
-            });
+            // $(document).on('keyup', '#search_working_city', function() {
+            //     if ($(this).val().length >= 0) {
+            //         var cities_lsit = getCitiesName($(this).val());
+            //     }
+            // });
 
-            function getCitiesName(city_name) {
-                var city_html = ' <ul class="list-group city_list">';
-                $.ajax({
-                    url: "{{ route('getallcities') }}",
-                    type: "get",
-                    data: {
-                        "city_name": city_name
-                    },
-                    success: function(city_response) {
-                        for (let i = 0; i < city_response.length; i++) {
-                            const city_names = city_response[i];
-                            city_html +=
-                                `<li class="list-group-item city_name" id="${city_names.id}" cityname="${city_names.city}, ${city_names.state}, ${city_names.country}">${city_names.city}, ${city_names.state}, ${city_names.country}</li>`;
-                        }
-                        city_html += '</ul>';
-                        $('.cityListOptions').html(city_html);
-                    }
-                });
-            }
+            // function getCitiesName(city_name) {
+            //     var city_html = ' <ul class="list-group city_list">';
+            //     $.ajax({
+            //         url: "{{ route('getallcities') }}",
+            //         type: "get",
+            //         data: {
+            //             "city_name": city_name
+            //         },
+            //         success: function(city_response) {
+            //             for (let i = 0; i < city_response.length; i++) {
+            //                 const city_names = city_response[i];
+            //                 city_html +=
+            //                     `<li class="list-group-item city_name" id="${city_names.id}" cityname="${city_names.city}, ${city_names.state}, ${city_names.country}">${city_names.city}, ${city_names.state}, ${city_names.country}</li>`;
+            //             }
+            //             city_html += '</ul>';
+            //             $('.cityListOptions').html(city_html);
+            //         }
+            //     });
+            // }
 
-            $(document).on('click', '.city_name', function() {
-                var id = $(this).attr('id');
-                var city_name = $(this).attr('cityname');
-                $('.cityListOptions').html('');
-                $('#working_city').val(id);
-                $('#search_working_city').val(city_name);
-            });
+            // $(document).on('click', '.city_name', function() {
+            //     var id = $(this).attr('id');
+            //     var city_name = $(this).attr('cityname');
+            //     $('.cityListOptions').html('');
+            //     $('#working_city').val(id);
+            //     $('#search_working_city').val(city_name);
+            // });
 
-            loadQualifications();
+            // loadQualifications();
 
-            function loadQualifications() {
-                var qual_html = '';
-                $.ajax({
-                    url: "{{ route('getalleducations') }}",
-                    type: "get",
-                    success: function(qualification_resp) {
-                        for (let j = 0; j < qualification_resp.length; j++) {
-                            const qualifications = qualification_resp[j];
-                            qual_html +=
-                                `<option value="${qualifications.id}, ${qualifications.degree_name}" qualname="${qualifications.degree_name}">${qualifications.degree_name}</option>`;
-                        }
-                        $('#education_list').html(qual_html);
-                    }
-                });
-            }
+            // function loadQualifications() {
+            //     var qual_html = '';
+            //     $.ajax({
+            //         url: "{{ route('getalleducations') }}",
+            //         type: "get",
+            //         success: function(qualification_resp) {
+            //             for (let j = 0; j < qualification_resp.length; j++) {
+            //                 const qualifications = qualification_resp[j];
+            //                 qual_html +=
+            //                     `<option value="${qualifications.id}, ${qualifications.degree_name}" qualname="${qualifications.degree_name}">${qualifications.degree_name}</option>`;
+            //             }
+            //             $('#education_list').html(qual_html);
+            //         }
+            //     });
+            // }
 
-            loadcountries();
+            // loadcountries();
 
-            function loadcountries() {
-                var countryHtml = '';
-                $.ajax({
-                    url: "{{ route('getallcountries') }}",
-                    type: "get",
-                    success: function(countryResp) {
-                        for (let k = 0; k < countryResp.length; k++) {
-                            const countryData = countryResp[k];
-                            countryHtml +=
-                                `<option value="${countryData.phonecode}" ${countryData.phonecode == 91 ? 'selected':''}>${countryData.sortname}</option>`;
-                        }
-                        $('#country_code').html(countryHtml);
-                        $('#country_code_al1').html(countryHtml);
-                        $('#country_code_al2').html(countryHtml);
-                        // $('#country_code_al1').val(91);
-                        // $('#country_code_al2').val(91);
-                        // $('#country_code').val(91);
-                    }
-                });
-            }
+            // function loadcountries() {
+            //     var countryHtml = '';
+            //     $.ajax({
+            //         url: "{{ route('getallcountries') }}",
+            //         type: "get",
+            //         success: function(countryResp) {
+            //             for (let k = 0; k < countryResp.length; k++) {
+            //                 const countryData = countryResp[k];
+            //                 countryHtml +=
+            //                     `<option value="${countryData.phonecode}" ${countryData.phonecode == 91 ? 'selected':''}>${countryData.sortname}</option>`;
+            //             }
+            //             $('#country_code').html(countryHtml);
+            //             $('#country_code_al1').html(countryHtml);
+            //             $('#country_code_al2').html(countryHtml);
+            //             // $('#country_code_al1').val(91);
+            //             // $('#country_code_al2').val(91);
+            //             // $('#country_code').val(91);
+            //         }
+            //     });
+            // }
 
-            // saving lead form
-            $(document).on('submit', '#lead_followup_form', function(e) {
-                e.preventDefault();
-                var followup_html = '';
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: $(this).attr('method'),
-                    data: $(this).serialize(),
-                    success: function(data_followup) {
-                        if (data_followup.type == true) {
-                            followup_html = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    <span class="sr-only">Close</span>
-                                </button>
-                                <strong>Success!</strong> Followup Has Been Saved
-                            </div>`;
-                            table_data.ajax.reload();
-                            $('#lead_followup_form')[0].reset();
-                        } else {
-                            followup_html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    <span class="sr-only">Close</span>
-                                </button>
-                                <strong>Alert!</strong> Failed to Save Record
-                            </div>`;
-                        }
-                        $('.followup_message').html(followup_html);
-                    }
-                });
-            });
+            // // saving lead form
+            // $(document).on('submit', '#lead_followup_form', function(e) {
+            //     e.preventDefault();
+            //     var followup_html = '';
+            //     $.ajax({
+            //         url: $(this).attr('action'),
+            //         type: $(this).attr('method'),
+            //         data: $(this).serialize(),
+            //         success: function(data_followup) {
+            //             if (data_followup.type == true) {
+            //                 followup_html = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            //                         <span aria-hidden="true">&times;</span>
+            //                         <span class="sr-only">Close</span>
+            //                     </button>
+            //                     <strong>Success!</strong> Followup Has Been Saved
+            //                 </div>`;
+            //                 table_data.ajax.reload();
+            //                 $('#lead_followup_form')[0].reset();
+            //             } else {
+            //                 followup_html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            //                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            //                         <span aria-hidden="true">&times;</span>
+            //                         <span class="sr-only">Close</span>
+            //                     </button>
+            //                     <strong>Alert!</strong> Failed to Save Record
+            //                 </div>`;
+            //             }
+            //             $('.followup_message').html(followup_html);
+            //         }
+            //     });
+            // });
 
-            // make an appointment
-            $(document).on('submit', '#appointmentForm', function(e) {
-                e.preventDefault();
-                $('.appointment_btn_div').html(
-                    '<button class="btn btn-success" type="button" disabled=""><span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>Loading...</button>'
-                );
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: $(this).attr('method'),
-                    data: $(this).serialize(),
-                    success: function(appoint_resp) {
-                        console.log(appoint_resp);
-                        if (appoint_resp.type == true) {
-                            $('.appointment_output').html(
-                                `<div class="alert alert-success" role="alert"><strong>${appoint_resp.message}</strong></div>`
-                            );
-                            window.setTimeout(function() {
-                                $('.appointment_output').html('');
-                                table_data.ajax.reload();
-                            }, 1500);
-                            $('#appointmentForm')[0].reset();
-                            $('.appointment_btn_div').html(
-                                '<button type="submit" name="submit" class="btn btn-sm btn-warning">Save Appointment</button>'
-                            );
-                            $('#fix_appointment_modal').modal('hide');
-                        } else {
-                            $('.appointment_output').html(
-                                `<div class="alert alert-success" role="alert"><strong>${appoint_resp.message}</strong></div>`
-                            );
-                        }
-                    },
-                    error: function(error_response) {
-                        var error_html = '<ul class="text-danger">';
-                        error_string_data = error_response.responseJSON.errors;
-                        $.each(error_string_data, function(key, value) {
-                            error_html += '<li>' + value + '</li>';
-                        });
-                        error_html += '<ul>';
-                        $('.form_output').html(error_html);
-                        $('.appointment_btn_div').html(
-                            '<button type="submit" name="submit" class="btn btn-sm btn-warning">Save Appointment</button>'
-                        );
-                    }
-                });
-            });
+            // // make an appointment
+            // $(document).on('submit', '#appointmentForm', function(e) {
+            //     e.preventDefault();
+            //     $('.appointment_btn_div').html(
+            //         '<button class="btn btn-success" type="button" disabled=""><span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>Loading...</button>'
+            //     );
+            //     $.ajax({
+            //         url: $(this).attr('action'),
+            //         type: $(this).attr('method'),
+            //         data: $(this).serialize(),
+            //         success: function(appoint_resp) {
+            //             console.log(appoint_resp);
+            //             if (appoint_resp.type == true) {
+            //                 $('.appointment_output').html(
+            //                     `<div class="alert alert-success" role="alert"><strong>${appoint_resp.message}</strong></div>`
+            //                 );
+            //                 window.setTimeout(function() {
+            //                     $('.appointment_output').html('');
+            //                     table_data.ajax.reload();
+            //                 }, 1500);
+            //                 $('#appointmentForm')[0].reset();
+            //                 $('.appointment_btn_div').html(
+            //                     '<button type="submit" name="submit" class="btn btn-sm btn-warning">Save Appointment</button>'
+            //                 );
+            //                 $('#fix_appointment_modal').modal('hide');
+            //             } else {
+            //                 $('.appointment_output').html(
+            //                     `<div class="alert alert-success" role="alert"><strong>${appoint_resp.message}</strong></div>`
+            //                 );
+            //             }
+            //         },
+            //         error: function(error_response) {
+            //             var error_html = '<ul class="text-danger">';
+            //             error_string_data = error_response.responseJSON.errors;
+            //             $.each(error_string_data, function(key, value) {
+            //                 error_html += '<li>' + value + '</li>';
+            //             });
+            //             error_html += '<ul>';
+            //             $('.form_output').html(error_html);
+            //             $('.appointment_btn_div').html(
+            //                 '<button type="submit" name="submit" class="btn btn-sm btn-warning">Save Appointment</button>'
+            //             );
+            //         }
+            //     });
+            // });
         });
     </script>
 @endsection
