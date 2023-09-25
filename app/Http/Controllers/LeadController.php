@@ -36,12 +36,16 @@ class LeadController extends Controller
         return view('crm.leads', compact("income_ranges"));
     }
 
-    /**
+    
+
+     public function deleteLead(Request $request){
+        dd($request);
+     }
+     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-
     public function listAllUnAssignedLeads()
     {
         $income_ranges = config('constants.income_ranges');

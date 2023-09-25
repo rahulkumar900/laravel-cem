@@ -326,6 +326,15 @@ class Lead extends Model
         ]);
     }
 
+    // Delete a Lead
+    protected function deleteLead($lead_id,$comment){
+        $lead = Lead::where('id',$lead_id)->first();
+        $all_comment = $lead->comments . ' ' . date('d-M-Y') . ' - ' . $comment . ';';
+        return Lead::where('id',$lead_id)->update([
+           // update all necessary filed
+        ]);
+    }
+
     // search lead in crm table also
     protected static function checkCrmLeads($mobile)
     {

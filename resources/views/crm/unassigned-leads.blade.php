@@ -194,64 +194,45 @@
     </div> --}}
     {{-- fix aoopintment modal  ends --}}
 
-    {{-- next follow up modal starts --}}
+    {{--Delete Message modal starts --}}
 
-    {{-- <div class="modal fade" id="next_followup_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    <div class="modal fade" id="delete_lead_modal"  tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Next Followup Modal</h5>
+                    <h5 class="modal-title">Delete Lead Modal</h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('savefollowups') }}" method="post" id="lead_followup_form"
+                    <form action="{{ route('deleteLead') }}" method="post" id="delete_lead_form"
                         autocomplete="off">
                         @csrf
-                        <input type="text" class="d-none" id="followup_lead_id" name="followup_lead_id">
+                        <input type="text" class="d-none" id="delete_lead_id" name="delete_lead_id">
                         <div class="form-group mb-2">
-                            <label for="">Status of Followup</label>
-                            <textarea class="form-control" name="followup_status" id="followup_status" rows="3"></textarea>
+                            <label for="">Comment</label>
+                            <textarea class="form-control" name="delete_message" id="delete_message" required rows="3"></textarea>
                         </div>
-                        <div class="form-group mb-2">
-                            <label for="">Next Followup Date</label>
+                        {{-- <div class="form-group mb-2">
+                            <label for="">Deletion Date</label>
                             <input type="date" value="{{ date('Y-m-d', strtotime('+7 days')) }}"
                                 name="next_followup_date" id="next_followup_date" min="{{ date('Y-m-d') }}"
                                 max="{{ date('Y-m-d', strtotime('+14 days')) }}" class="form-control">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Select Plan</label>
-                            <select name="plan_id" id="plan_id" class="form-select">
-                                <option value="">Select Plan</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Amount</label>
-                            <input type="number" name="amount" id="amount" class="form-control">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="">Interest Level</label>
-                            <select name="lead_speed" id="lead_speed" class="form-select">
-                                <option value="">Interest Level</option>
-                                <option value="Very High" selected>Very High</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                                <option value="Less">Less</option>
-                            </select>
-                        </div>
+                        </div> --}}
+                      
                         <div class="form-group mb-2 followup_message">
                         </div>
                         <div class="form-group mb-2 float-end">
-                            <button class="btn btn-success" type="submit" name="submit">Add Followup</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button class="btn btn-danger" type="submit" name="submit">Delete Lead</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </div> --}}
-    {{-- next follow up modal endss --}}
+    </div>
+    {{-- Delete Message modal endss --}}
 
     {{-- search lead modal starts --}}
     <div class="modal fade" id="search_lead_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
@@ -792,8 +773,8 @@
 
 @endsection
 @section('custom-scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
             var table_data = $('#salescrm-table').DataTable({
@@ -1010,22 +991,30 @@
             // Delete _leads
             $(document).on('click','.delete_leads',function(e){
                 e.preventDefault();
-                if(confirm('Are you sure you want to delete?'')){
-                    $.ajax({
-                        url:"{{ site.base_url}}",
-                        type:'get',
-                        data:{
-                            "lead_id":$(this).attr('lead_id'),
-                        },
-                        success:function(deleteLeadRes){
-                            if (deleLeadResp.type == true) {
-                                alert(deleLeadResp.message);
-                                table_data.ajax.reload();
-                            }
-                        }
-                    })
-                }
+                $('#delete_lead_id').val($(this).attr('lead_id'));
+                $('.delete_message').html('');
+                $('#delete_lead_modal').modal('show');
             });
+
+
+
+            // Submit Delete Submit Form Comment 
+
+            $(document).on('submit','delete_lead_form',function(e){
+                e.preventDefault();
+                 $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: $(this).serialize(),
+                    success: function(res){
+                        console.log(res);
+                    }
+                  
+                })
+               
+            });
+
+
 
 
             // // saerch lead

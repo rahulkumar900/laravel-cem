@@ -14,22 +14,15 @@ use App\Http\Controllers\UserDataController;
 
 Route::get('leads', [LeadController::class, 'index'])->name('crmleads');
 /*We have been fortunate to have a growing number of clients who have viewed our subscription pages. These clients come from a diverse range of backgrounds and industries, including but not limited to finance, healthcare, technology, and education. They appreciate the variety of subscription options we offer, which cater to different needs and budgets. Some of our clients have even shared positive feedback about their experiences with our subscriptions, which has helped us refine our offerings to better meet their needs. We are always looking for ways to improve our services and attract new clients, and the interest we have received from our current client base is a testament to the quality of our subscriptions. */
+Route::post('delete-lead',[LeadController::class,'deleteLead'])->name('deleteLead');
+/* Delete Lead */
 Route::get('unassigned-leads',[LeadController::class, 'listAllUnAssignedLeads'])->name('unassigned-leads');
 /*List all  unassigned Leads.*/
 Route::get('search-leads', [LeadController::class, 'searchLeadDetails'])->name('searchleads');
 /*The telesales dashboard is a centralized location where sales representatives can manage their leads and follow up with potential clients. With access to all the necessary information in one place, sales representatives can easily prioritize leads and focus on those that are most likely to convert into customers. In addition, the dashboard provides valuable insights into the performance of the sales team, allowing managers to identify areas for improvement and make data-driven decisions. Overall, the telesales dashboard is an essential tool for any company looking to streamline their sales process and improve their bottom line. */
 Route::get('all-leads', [LeadController::class, 'showLeadData'])->name('allleads');
 /* List all Un-Assigned List Route*/
-
-
-
-
-
 Route::get('all-unassigned-leads', [LeadController::class, 'showUnassignLeads'])->name('getAllUnAssignedLeads');
-
-
-
-
 /*We have been fortunate to have a growing number of clients who have viewed our subscription pages. These clients come from a diverse range of backgrounds and industries, including but not limited to finance, healthcare, technology, and education. They appreciate the variety of subscription options we offer, which cater to different needs and budgets. Some of our clients have even shared positive feedback about their experiences with our subscriptions, which has helped us refine our offerings to better meet their needs. We are always looking for ways to improve our services and attract new clients, and the interest we have received from our current client base is a testament to the quality of our subscriptions. */
 Route::get('subscription-seen', [LeadController::class, 'subSeenView'])->name('subscriptionseen');
 /*We have been fortunate to have a growing number of clients who have viewed our subscription pages. These clients come from a diverse range of backgrounds and industries, including but not limited to finance, healthcare, technology, and education. They appreciate the variety of subscription options we offer, which cater to different needs and budgets. Some of our clients have even shared positive feedback about their experiences with our subscriptions, which has helped us refine our offerings to better meet their needs. We are always looking for ways to improve our services and attract new clients, and the interest we have received from our current client base is a testament to the quality of our subscriptions. */
