@@ -39,7 +39,14 @@ class LeadController extends Controller
     
 
      public function deleteLead(Request $request){
-        dd($request);
+       
+        $delete_lead = Lead::deleteLead($request->delete_lead_id,$request->delete_message );
+        
+        if ($delete_lead) {
+            return response()->json(["type" => true, 'message' => 'deleted successfully']);
+        } else {
+            return response()->json(["type" => false, 'message' => 'failed to delete']);
+        }
      }
      /**
      * Display a listing of the resource.
@@ -249,14 +256,15 @@ class LeadController extends Controller
 
     public function showUnassignLeads(Request $request)
     {
-        $startDate = '2023-06-01';
-        $endDate = '2023-06-30';
+        $startDate = '2023-02-01';
+        $endDate = '2023-09-30';
         $lead_data = array();
         $arrayOfStatus = [0,2];
 
 
         $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
             ->where('leads.assign_to', 'online')
+            ->where('leads.is_deleted', 0)
             ->whereIn('is_done', $arrayOfStatus)
             ->whereBetween('user_data.created_at', [$startDate, $endDate]) // Adjusted line
             ->orderBy('leads.created_at', 'desc') // Adjusted line
@@ -282,21 +290,22 @@ class LeadController extends Controller
 
 
 
-            // if (Auth::user()->temple_id == $lead_detail->temple_id) {
-            $reject_lead_button = ' <div class="row">
-                    <div class="col-6">
-                        <button type="button"
-                            class="btn btn-sm btn-danger reject_leads waves-effect waves-light"
-                            data-toggle="tooltip" data-placement="top" title="Mark Rejected Lead" lead_id="' . $lead_detail->lead_id . '">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>';
-            // // } else {
-            //     $reject_lead_button = 'Not Allowed';
-            // }
-            //dd($lead_detail->comments);
-            // comments
+            
+
+
+            // $reject_lead_button = ' <div class="row">
+            //         <div class="col-6">
+            //             <button type="button"
+            //                 class="btn btn-sm btn-danger reject_leads waves-effect waves-light"
+            //                 data-toggle="tooltip" data-placement="top" title="Mark Rejected Lead" lead_id="' . $lead_detail->lead_id . '">
+            //                 <i class="fas fa-times"></i>
+            //             </button>
+            //         </div>
+            //     </div>';
+        
+        
+        
+             
 
 
             $delete_lead_button = ' <div class="row">
@@ -342,12 +351,12 @@ class LeadController extends Controller
             $lead_data[] = array(
                 'lead_name'             =>          $lead_detail->lead_name,
                 'mobile'                =>          $lead_detail->user_mobile,
-                // 'status'                =>          $status,
-                'status' =>                         $lead_detail->is_done,
+                'status'                =>          $status,
+                // 'status' =>                         $lead_detail->is_done,
                 'assigned_to'           =>          $lead_detail->temple_id,
                 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
                 'assign_to_me'          =>          $assign_to_me_button,
-                'reject'                =>          $reject_lead_button,
+                
                 'delete'                =>          $delete_lead_button,
             );
             $i++;
@@ -551,7 +560,7 @@ class LeadController extends Controller
         $fetched_array = array();
 
         $search_leads = Lead::searchLeadData($mobile);
-
+       
         // return response with heading
         if (empty($search_leads)) {
             $type = false;

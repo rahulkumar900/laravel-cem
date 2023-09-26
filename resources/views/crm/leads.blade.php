@@ -1005,7 +1005,7 @@
                 e.preventDefault();
                 $('#followup_lead_id').val($(this).attr('lead_id'));
                 $('.followup_message').html('');
-                $('#next_followup_modal').modal('show');
+                $('#next_followup_modal').modal('show'); 
             });
 
             //send_sample_profile
@@ -1044,7 +1044,7 @@
 
             $(document).on('click', '.search_crm_lead_mobile', function(e) {
                 e.preventDefault();
-                // console.log('test')
+                console.log('test')
                 var lead_mobile = $('#search_mobile_number').val();
                 lead_mobile = lead_mobile.substr(lead_mobile.length - 10, 10)
                 var leads_html = '';
@@ -1065,6 +1065,7 @@
                             "lead_mobile_no": lead_mobile
                         },
                         success: function(search_resp) {
+                           console.log(search_resp.data);
                             $('.search_btn_div').html(
                                 ' <button class="btn btn-purple btn-rounded btn-sm waves-effect waves-light search_crm_lead_mobile"><i class="fas fa-search"></i></button>'
                             );

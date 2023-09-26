@@ -37,7 +37,6 @@
                                 <th>Assigned To</th>
                                 <th>Created At</th>
                                 <th>Assign To</th>
-                                <th>Reject</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -803,9 +802,7 @@
                     {
                         data: 'assign_to_me',
                     },
-                   {
-                    data: 'reject'
-                   },
+                 
                    {
                     data: 'delete'
                    },
@@ -1000,14 +997,42 @@
 
             // Submit Delete Submit Form Comment 
 
-            $(document).on('submit','delete_lead_form',function(e){
+            $(document).on('submit','#delete_lead_form',function(e){
                 e.preventDefault();
                  $.ajax({
                     url: $(this).attr('action'),
                     type: $(this).attr('method'),
                     data: $(this).serialize(),
                     success: function(res){
-                        console.log(res);
+                        
+                        if (res.type == true) {
+                            followup_html = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                               
+                                <strong>Success!</strong> Lead  Has Been Deleted Successfully
+                            </div>`;
+                            table_data.ajax.reload();
+                            $('#delete_lead_form')[0].reset();
+                        } else {
+                            followup_html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">Close</span>
+                                </button>
+                                <strong>Alert!</strong> Failed to Save Record
+                            </div>`;
+                        }
+                        $('.followup_message').html(followup_html);
+                        table_data.ajax.reload();
+                        window.setTimeout(function() {
+                            $('#delete_lead_modal').modal('hide');
+                            $('.followup_message').html('');
+                            }, 1500);
+
+
+                    },
+                    error:function(xhr, status, error){
+                            console.log(status,error);
+
                     }
                   
                 })
@@ -1136,7 +1161,7 @@
                         "lead_id": lead_id
                     },
                     success: function(assign_response) {
-                        console.log("clicked");
+                        alert(assign_response.message);
                         $(".search_crm_lead_mobile").trigger('click');
                         table_data.ajax.reload();
                     }, 

@@ -327,10 +327,13 @@ class Lead extends Model
     }
 
     // Delete a Lead
-    protected function deleteLead($lead_id,$comment){
-        $lead = Lead::where('id',$lead_id)->first();
+    protected static function deleteLead($lead_id,$comment){
+        $lead = Lead::where('user_data_id',$lead_id)->first();
         $all_comment = $lead->comments . ' ' . date('d-M-Y') . ' - ' . $comment . ';';
-        return Lead::where('id',$lead_id)->update([
+        return Lead::where('user_data_id',$lead_id)->update([
+            'is_deleted' =>1,
+            'deleted_by' => Auth::user()->temple_id,
+            'comments' => $all_comment
            // update all necessary filed
         ]);
     }
