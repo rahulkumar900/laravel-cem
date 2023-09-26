@@ -256,7 +256,7 @@ class LeadController extends Controller
 
     public function showUnassignLeads(Request $request)
     {
-        $startDate = '2023-02-01';
+        $startDate = '2023-06-01';
         $endDate = '2023-09-30';
         $lead_data = array();
         $arrayOfStatus = [0,2];
