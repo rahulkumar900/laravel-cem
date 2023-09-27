@@ -36,19 +36,20 @@ class LeadController extends Controller
         return view('crm.leads', compact("income_ranges"));
     }
 
-    
 
-     public function deleteLead(Request $request){
-       
-        $delete_lead = Lead::deleteLead($request->delete_lead_id,$request->delete_message );
-        
+
+    public function deleteLead(Request $request)
+    {
+
+        $delete_lead = Lead::deleteLead($request->delete_lead_id, $request->delete_message);
+
         if ($delete_lead) {
             return response()->json(["type" => true, 'message' => 'deleted successfully']);
         } else {
             return response()->json(["type" => false, 'message' => 'failed to delete']);
         }
-     }
-     /**
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -256,11 +257,11 @@ class LeadController extends Controller
 
     public function showUnassignLeads(Request $request)
     {
-    //    print_r($request->all());
-        $startDate = '2023-06-01'; 
+        //    print_r($request->all());
+        $startDate = '2023-06-01';
         $endDate = '2023-09-30';
         $lead_data = array();
-        $arrayOfStatus = [0,2];
+        $arrayOfStatus = [0, 2];
 
 
         // dataTable request parameters
@@ -270,14 +271,14 @@ class LeadController extends Controller
         $rowPerPage = $request->get('length'); // how many records needs for pagination
 
         $orderArray = $request->get('order'); // 
-        $columnNameArray = $request->get('columns'); 
+        $columnNameArray = $request->get('columns');
         $searchArray = $request->get('search');
         $columnIndex = $orderArray[0]['column']; // it will give column array of table 
-                                                // [0] - 'id' , [1] - 'name', [2] - 'email',
+        // [0] - 'id' , [1] - 'name', [2] - 'email',
 
 
         $columnName = $columnNameArray[$columnIndex]['data']; // it will give column name 
-                                                            // Based on index 
+        // Based on index 
 
         $columnSortOrder = $orderArray[0]['dir']; // it will get us order direction 
         $searchValue  = $searchArray['value'];    // it will give search value 
@@ -286,33 +287,75 @@ class LeadController extends Controller
 
         // Search for Unsigned Leads and join with user_data table 
 
-        $orderbyString  = 'user_data.'.$columnName; //
-        
+        $orderbyString  = 'user_data.' . $columnName; //
 
-        $lead = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
-            ->where('leads.assign_to', 'online')
-            ->where('leads.is_deleted', 0)
-            ->whereIn('is_done', $arrayOfStatus);
-            // ->whereBetween('user_data.created_at', [$startDate, $endDate]); // Adjusted line
+
+        // $lead = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+        //     ->where('leads.assign_to', 'online')
+        //     ->where('leads.is_deleted', 0)
+        //     ->whereIn('is_done', $arrayOfStatus);
+        //     // ->whereBetween('user_data.created_at', [$startDate, $endDate]); // Adjusted line
+
+        //     $total  = $lead->count(); // Count the total number of lead
+        //     $totalFilter = $total;
+
+        //     $lead_details = $lead->skip($start)
+        //     ->take($rowPerPage)
+        //     ->orderByRaw("{$orderbyString} {$columnSortOrder}") // Adjusted line
+        //     ->get([
+        //         'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
+        //         'user_data.id as lead_id','user_data.annual_income', 'user_data.user_mobile',
+        //         'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
+        //     ]);
+
+
+
+
+        $cacheKey = 'lead_query_' . md5(serialize($arrayOfStatus)); // Create a cache key based on $arrayOfStatus
+        $cacheDuration = 60; // Cache duration in minutes
+
+        $lead = Cache::remember($cacheKey, $cacheDuration, function () use ($arrayOfStatus, $start, $rowPerPage, $orderbyString, $columnSortOrder) {
+            // Query to fetch the data
+            $leadQuery = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+                ->where('leads.assign_to', 'online')
+                ->where('leads.is_deleted', 0)
+                ->whereIn('is_done', $arrayOfStatus);
+
+            // Calculate and cache the total count
+            $total = $leadQuery->count();
            
-            $total  = $lead->count(); // Count the total number of lead
-            $totalFilter = $total;
 
-            $lead_details = $lead->skip($start)
-            ->take($rowPerPage)
-            ->orderByRaw("{$orderbyString} {$columnSortOrder}") // Adjusted line
-            ->get([
-                'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
-                'user_data.id as lead_id','user_data.annual_income', 'user_data.user_mobile',
-                'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
-            ]);
+            // Retrieve the paginated and sorted data
+            $lead_details = $leadQuery
+                ->skip($start)
+                ->take($rowPerPage)
+                ->orderByRaw("{$orderbyString} {$columnSortOrder}")
+                ->get([
+                    'leads.assign_to', 'leads.is_done','leads.comments', 'user_data.name as lead_name', 'user_data.created_at',
+                    'user_data.id as lead_id', 'user_data.annual_income', 'user_data.user_mobile',
+                    'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
+                ]);
+
+            return [
+                'total' => $total,
+                'data' => $lead_details,
+            ];
+        });
+
+        // Retrieve the total count from the cache
+        $total = Cache::get($cacheKey . '_total');
+
+        // Access the data
+        $lead_details = $lead['data'];
+        $total = $lead['total'];
+        $totalFilter = $lead['total'];
 
         ///////////////////////////////////////////////////////////////////////////
 
 
 
-           
-            
+
+
 
 
 
@@ -346,7 +389,7 @@ class LeadController extends Controller
 
 
 
-            
+
 
 
             // $reject_lead_button = ' <div class="row">
@@ -358,12 +401,22 @@ class LeadController extends Controller
             //             </button>
             //         </div>
             //     </div>';
-        
-        
-        
-             
+
+///////////////////////////////////////////////
+$comments = '';
+$comments_raw = explode(';', $lead_detail->comments);
+
+$comments .= '<a href="#comments' . $i . '" class="collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="comments' . $i . '">Expand</a>
+<div id="comments' . $i . '" class="collapse">';
+for ($j = 0; $j < count($comments_raw); $j++) {
+    $comments .=    '<p style="white-space: pre-line; line-break:auto; width:250px; text-align:justify"> ' . $comments_raw[$j] . ' </p>';
+}
+
+$comments .= '</div>';
 
 
+
+////////////////////////////////////////////////////////////////////
             $delete_lead_button = ' <div class="row">
             <div class="col-6">
                 <button type="button"
@@ -381,22 +434,14 @@ class LeadController extends Controller
             // ////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////
 
-            $status = '';
-            $isDone = $lead_detail->is_done;
-            if ($isDone === '0') {
-                $status  = 'Open';
-            } elseif ($isDone === '1') {
-                $status = 'Converted';
-            } else {
-                $status = 'Rejected';
-            }
+        
 
             $lead_data[] = array(
-                'name'             =>          $lead_detail->lead_name ,
-                'mobile'                =>          $lead_detail->user_mobile ,
+                'name'             =>          $lead_detail->lead_name,
+                'mobile'                =>          $lead_detail->user_mobile,
                 'annual_income'          =>         $lead_detail->annual_income,
-                'status'                =>          $status,
-                'assigned_to'           =>          $lead_detail->temple_id ,
+                'comments'                =>        $comments,
+                'assigned_to'           =>          $lead_detail->temple_id,
                 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
                 'assign_to_me'          =>          $assign_to_me_button,
                 'delete'                =>          $delete_lead_button,
@@ -408,7 +453,7 @@ class LeadController extends Controller
 
         $dataset = array(
             "echo" => 1,
-            "draw" =>intval($draw),
+            "draw" => intval($draw),
             "recordsTotal" => $total,
             "recordsFiltered" => $totalFilter,
             "data" => $lead_data,
@@ -605,7 +650,7 @@ class LeadController extends Controller
         $fetched_array = array();
 
         $search_leads = Lead::searchLeadData($mobile);
-       
+
         // return response with heading
         if (empty($search_leads)) {
             $type = false;

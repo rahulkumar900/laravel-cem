@@ -34,6 +34,7 @@
                                 <th>Name</th>
                                 <th>Mobile</th>
                                 <th>Annual Income</th>
+                                <th>Comments</th>
                                 <th>Assigned To</th>
                                 <th>Created At</th>
                                 <th>Assign To</th>
@@ -793,9 +794,9 @@
                     {
                         data: 'annual_income'
                     },
-                    // {
-                    //     data: 'status',
-                    // },
+                    {
+                        data: 'comments',
+                    },
                     {
                         data: 'assigned_to',
                     },
