@@ -256,23 +256,79 @@ class LeadController extends Controller
 
     public function showUnassignLeads(Request $request)
     {
-        $startDate = '2023-06-01';
+    //    print_r($request->all());
+        $startDate = '2023-06-01'; 
         $endDate = '2023-09-30';
         $lead_data = array();
         $arrayOfStatus = [0,2];
 
 
-        $lead_details = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+        // dataTable request parameters
+
+        $draw = $request->get('draw'); //internal use 
+        $start = $request->get('start'); // where to start next record for pagination 
+        $rowPerPage = $request->get('length'); // how many records needs for pagination
+
+        $orderArray = $request->get('order'); // 
+        $columnNameArray = $request->get('columns'); 
+        $searchArray = $request->get('search');
+        $columnIndex = $orderArray[0]['column']; // it will give column array of table 
+                                                // [0] - 'id' , [1] - 'name', [2] - 'email',
+
+
+        $columnName = $columnNameArray[$columnIndex]['data']; // it will give column name 
+                                                            // Based on index 
+
+        $columnSortOrder = $orderArray[0]['dir']; // it will get us order direction 
+        $searchValue  = $searchArray['value'];    // it will give search value 
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        // Search for Unsigned Leads and join with user_data table 
+
+        $orderbyString  = 'user_data.'.$columnName; //
+        
+
+        $lead = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
             ->where('leads.assign_to', 'online')
             ->where('leads.is_deleted', 0)
-            ->whereIn('is_done', $arrayOfStatus)
-            ->whereBetween('user_data.created_at', [$startDate, $endDate]) // Adjusted line
-            ->orderBy('leads.created_at', 'desc') // Adjusted line
+            ->whereIn('is_done', $arrayOfStatus);
+            // ->whereBetween('user_data.created_at', [$startDate, $endDate]); // Adjusted line
+           
+            $total  = $lead->count(); // Count the total number of lead
+            $totalFilter = $total;
+
+            $lead_details = $lead->skip($start)
+            ->take($rowPerPage)
+            ->orderByRaw("{$orderbyString} {$columnSortOrder}") // Adjusted line
             ->get([
                 'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
-                'user_data.id as lead_id', 'user_data.user_mobile',
+                'user_data.id as lead_id','user_data.annual_income', 'user_data.user_mobile',
                 'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
             ]);
+
+        ///////////////////////////////////////////////////////////////////////////
+
+
+
+           
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         // data Feaching Block End Here
@@ -323,19 +379,6 @@ class LeadController extends Controller
 
 
             // ////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
             ///////////////////////////////////////////////////////////////////////
 
             $status = '';
@@ -349,23 +392,25 @@ class LeadController extends Controller
             }
 
             $lead_data[] = array(
-                'lead_name'             =>          $lead_detail->lead_name,
-                'mobile'                =>          $lead_detail->user_mobile,
+                'name'             =>          $lead_detail->lead_name ,
+                'mobile'                =>          $lead_detail->user_mobile ,
+                'annual_income'          =>         $lead_detail->annual_income,
                 'status'                =>          $status,
-                // 'status' =>                         $lead_detail->is_done,
-                'assigned_to'           =>          $lead_detail->temple_id,
+                'assigned_to'           =>          $lead_detail->temple_id ,
                 'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
                 'assign_to_me'          =>          $assign_to_me_button,
-                
                 'delete'                =>          $delete_lead_button,
             );
             $i++;
         };
 
+
+
         $dataset = array(
             "echo" => 1,
-            "totalrecords" => count($lead_data),
-            "totaldisplayrecords" => count($lead_data),
+            "draw" =>intval($draw),
+            "recordsTotal" => $total,
+            "recordsFiltered" => $totalFilter,
             "data" => $lead_data,
             "test" => Auth::user()->temple_id
         );

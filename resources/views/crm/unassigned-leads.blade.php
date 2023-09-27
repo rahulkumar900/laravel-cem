@@ -33,7 +33,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Mobile</th>
-                                <th>Status</th>
+                                <th>Annual Income</th>
                                 <th>Assigned To</th>
                                 <th>Created At</th>
                                 <th>Assign To</th>
@@ -778,21 +778,24 @@
         $(document).ready(function() {
             var table_data = $('#salescrm-table').DataTable({
                 "order": [
-                    [4, "desc"]
+                    [2, "desc"]
                 ],
                 "processing": true,
-                // "serverSide": true,
+                "serverSide": true,
                 "ajax": "{{route('getAllUnAssignedLeads')}}",
                 "columns": [
                     {
-                        data: 'lead_name',
+                        data: 'name',
                     },
                     {
                         data: 'mobile',
                     },
                     {
-                        data: 'status',
+                        data: 'annual_income'
                     },
+                    // {
+                    //     data: 'status',
+                    // },
                     {
                         data: 'assigned_to',
                     },
