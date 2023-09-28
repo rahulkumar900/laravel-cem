@@ -257,141 +257,84 @@ class LeadController extends Controller
 
     public function showUnassignLeads(Request $request)
     {
-        //    print_r($request->all());
-        $startDate = '2023-06-01';
-        $endDate = '2023-09-30';
-        $lead_data = array();
-        $arrayOfStatus = [0, 2];
+        $startDate = '2023-01-01'; // Filter From  date 'YYYY-MM-DD'()
+        $endDate = '2023-06-30'; // Filter upTo date 'YYYY-MM-DD()
+        $lead_data = array(); // Create Empty array
+        $arrayOfStatus = [0, 2]; // Array of status codes like 0->open,1->Converted,2->Rejected
 
-
+        /////////////////////////////////////////////////////////////////////////
         // dataTable request parameters
-
+        // START 👇
+        /////////////////////////////////////////////////////////////////////////
         $draw = $request->get('draw'); //internal use 
         $start = $request->get('start'); // where to start next record for pagination 
         $rowPerPage = $request->get('length'); // how many records needs for pagination
-
         $orderArray = $request->get('order'); // 
         $columnNameArray = $request->get('columns');
         $searchArray = $request->get('search');
         $columnIndex = $orderArray[0]['column']; // it will give column array of table 
         // [0] - 'id' , [1] - 'name', [2] - 'email',
-
-
-        $columnName = $columnNameArray[$columnIndex]['data']; // it will give column name 
-        // Based on index 
-
+        $columnName = $columnNameArray[$columnIndex]['data']; // it will give column name Based on index 
         $columnSortOrder = $orderArray[0]['dir']; // it will get us order direction 
         $searchValue  = $searchArray['value'];    // it will give search value 
+        /////////////////////////////////////////////////////////////////////////
+        // dataTable request parameters 
+        // END 👋👋
+        /////////////////////////////////////////////////////////////////////////
 
-        /////////////////////////////////////////////////////////////////////////////////
-
+        ////////////////////////////////////////////////////////////////////////
         // Search for Unsigned Leads and join with user_data table 
+        // START 👇 🔍🔍
+        ////////////////////////////////////////////////////////////////////////
+        $orderbyString  = 'user_data.' . $columnName; // Creating parms String like 'user_data.name' 'user_data.created_at'
+        // Query to fetch the data
+        $leadQuery = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
+            ->where('leads.assign_to', 'online')
+            ->where('leads.is_deleted', 0)
+            ->whereIn('is_done', $arrayOfStatus)
+            ->whereBetween('user_data.created_at', [$startDate, $endDate]);
 
-        $orderbyString  = 'user_data.' . $columnName; //
+        //Query to filter by Search Value
+        if (!empty($searchValue)) {
+            $leadQuery = $leadQuery->where('user_data.name', 'like', '%' . $searchValue . '%')
+                ->orWhere('user_data.user_mobile', 'like', '%' . $searchValue . '%');
+        }
+        // Calculate total count
+        $total = $leadQuery->count();
 
+        // Retrieve the paginated and sorted data
+        $lead_details = $leadQuery
+            ->skip($start)
+            ->take($rowPerPage)
+            ->orderByRaw("{$orderbyString} {$columnSortOrder}")
+            ->get([
+                'leads.assign_to', 'leads.is_done', 'leads.comments', 'user_data.name as lead_name', 'user_data.created_at',
+                'user_data.id as lead_id', 'user_data.annual_income', 'user_data.user_mobile',
+                'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
+            ]);
 
-        // $lead = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
-        //     ->where('leads.assign_to', 'online')
-        //     ->where('leads.is_deleted', 0)
-        //     ->whereIn('is_done', $arrayOfStatus);
-        //     // ->whereBetween('user_data.created_at', [$startDate, $endDate]); // Adjusted line
-
-        //     $total  = $lead->count(); // Count the total number of lead
-        //     $totalFilter = $total;
-
-        //     $lead_details = $lead->skip($start)
-        //     ->take($rowPerPage)
-        //     ->orderByRaw("{$orderbyString} {$columnSortOrder}") // Adjusted line
-        //     ->get([
-        //         'leads.assign_to', 'leads.is_done', 'user_data.name as lead_name', 'user_data.created_at',
-        //         'user_data.id as lead_id','user_data.annual_income', 'user_data.user_mobile',
-        //         'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
-        //     ]);
-
-
-
-
-        $cacheKey = 'lead_query_' . md5(serialize($arrayOfStatus)); // Create a cache key based on $arrayOfStatus
-        $cacheDuration = 60; // Cache duration in minutes
-
-        $lead = Cache::remember($cacheKey, $cacheDuration, function () use ($arrayOfStatus, $start, $rowPerPage, $orderbyString, $columnSortOrder) {
-            // Query to fetch the data
-            $leadQuery = Lead::join('user_data', 'leads.user_data_id', 'user_data.id')
-                ->where('leads.assign_to', 'online')
-                ->where('leads.is_deleted', 0)
-                ->whereIn('is_done', $arrayOfStatus);
-
-            // Calculate and cache the total count
-            $total = $leadQuery->count();
-           
-
-            // Retrieve the paginated and sorted data
-            $lead_details = $leadQuery
-                ->skip($start)
-                ->take($rowPerPage)
-                ->orderByRaw("{$orderbyString} {$columnSortOrder}")
-                ->get([
-                    'leads.assign_to', 'leads.is_done','leads.comments', 'user_data.name as lead_name', 'user_data.created_at',
-                    'user_data.id as lead_id', 'user_data.annual_income', 'user_data.user_mobile',
-                    'leads.assign_to as temple_id', 'user_data_id', 'leads.assigned_at',
-                ]);
-
-            return [
-                'total' => $total,
-                'data' => $lead_details,
-            ];
-        });
-
-        // Retrieve the total count from the cache
-        $total = Cache::get($cacheKey . '_total');
-
-        // Access the data
-        $lead_details = $lead['data'];
-        $total = $lead['total'];
-        $totalFilter = $lead['total'];
-
-        ///////////////////////////////////////////////////////////////////////////
+        $totalFilter = $total;
+        ////////////////////////////////////////////////////////////////////////
+        // data Feaching Block
+        // END 🔍🔍❌❌❌❌❌
+        ////////////////////////////////////////////////////////////////////////
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // data Feaching Block End Here
         $i = 0;
         $assign_to_me_button = "";
         $reject_lead_button = "";
+
+        ////////////////////////////////////////////////////////////////////////
+        // DATA TRANSFORMATION AS PER NEED TO RESPOSE
+        ////////////////////////////////////////////////////////////////////////
+
         foreach ($lead_details as $lead_detail) {
             $templeId = Auth::user()->temple_id;
-
             $assign_to_me_button = '<button type="button" class="btn btn-sm btn-success assgn_to_me_btn" leadId="' . $lead_detail['lead_id'] . ' "key="' . $lead_detail['lead_id'] .    '" templeId="' . $templeId . '">Assign To Me</button>';
 
-            // ////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
+            ////////////////////////////////////////////////////////////////
+            // Reject Lead Button 
+            ////////////////////////////////////////////////////////////////
             // $reject_lead_button = ' <div class="row">
             //         <div class="col-6">
             //             <button type="button"
@@ -401,22 +344,35 @@ class LeadController extends Controller
             //             </button>
             //         </div>
             //     </div>';
-
-///////////////////////////////////////////////
-$comments = '';
-$comments_raw = explode(';', $lead_detail->comments);
-
-$comments .= '<a href="#comments' . $i . '" class="collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="comments' . $i . '">Expand</a>
-<div id="comments' . $i . '" class="collapse">';
-for ($j = 0; $j < count($comments_raw); $j++) {
-    $comments .=    '<p style="white-space: pre-line; line-break:auto; width:250px; text-align:justify"> ' . $comments_raw[$j] . ' </p>';
-}
-
-$comments .= '</div>';
+            ////////////////////////////////////////////////////////////////
+            // END OF Reject Lead Button
+            ////////////////////////////////////////////////////////////////
 
 
+            ////////////////////////////////////////////////////////////////
+            // Comments Expandable Button
+            ////////////////////////////////////////////////////////////////
+            $comments = '';
+            $delemeter = ";";
+            $comments_raw = array_reverse(array_filter(explode($delemeter, $lead_detail->comments)));
+            $comments .= '<a href="#comments' . $i . '" class="collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="comments' . $i . '">Expand</a>
+            <div id="comments' . $i . '" class="collapse">';
+            if (count($comments_raw) < 1) {
+                $comments .=    '<p style="white-space: pre-line; line-break:auto; width:250px; text-align:justify"> No Comments Available </p>';
+            } else {
+                for ($j = 0; $j < count($comments_raw); $j++) {
+                    $comments .=    '<p style="white-space: pre-line; line-break:auto; width:250px; text-align:justify"> ' . $comments_raw[$j] . ' </p>';
+                }
+            }
+            $comments .= '</div>';
 
-////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////
+            // End of Comments Expandable Button
+            ////////////////////////////////////////////////////////////////
+
+            ///////////////////////////////////////////////////////////////////
+            // Delete Lead Button Block
+            ////////////////////////////////////////////////////////////////////
             $delete_lead_button = ' <div class="row">
             <div class="col-6">
                 <button type="button"
@@ -425,32 +381,43 @@ $comments .= '</div>';
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
-        </div>';
+             </div>';
+            ///////////////////////////////////////////////////////////////////
+            // End of Delete Lead Button Block
+            ////////////////////////////////////////////////////////////////////
 
-
-
-
-
-            // ////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////
-
-        
-
+            ///////////////////////////////////////////////////////////////////
+            // Fill data in An Array
+            ///////////////////////////////////////////////////////////////////
             $lead_data[] = array(
-                'name'             =>          $lead_detail->lead_name,
-                'mobile'                =>          $lead_detail->user_mobile,
-                'annual_income'          =>         $lead_detail->annual_income,
-                'comments'                =>        $comments,
-                'assigned_to'           =>          $lead_detail->temple_id,
-                'created_at'            =>          date('Y-m-d', strtotime($lead_detail->created_at)),
-                'assign_to_me'          =>          $assign_to_me_button,
-                'delete'                =>          $delete_lead_button,
+                'name'                  =>         $lead_detail->lead_name,
+                'mobile'                =>         $lead_detail->user_mobile,
+                'annual_income'         =>         $lead_detail->annual_income,
+                'comments'              =>         $comments,
+                'assigned_to'           =>         $lead_detail->temple_id,
+                'created_at'            =>         date('Y-m-d', strtotime($lead_detail->created_at)),
+                'assign_to_me'          =>         $assign_to_me_button,
+                'delete'                =>         $delete_lead_button,
             );
+
+            ///////////////////////////////////////////////////////////////////
+            // End of Fill data in An Array 
+            ///////////////////////////////////////////////////////////////////
+
+
             $i++;
         };
 
+        ////////////////////////////////////////////////////////////////////////
+        // DATA TRANSFORMATION AS PER NEED TO RESPOSE
+        // END
+        ////////////////////////////////////////////////////////////////////////
 
 
+
+        ////////////////////////////////////////////////////////////////////////
+        // Create dataSet object
+        ////////////////////////////////////////////////////////////////////////
         $dataset = array(
             "echo" => 1,
             "draw" => intval($draw),
@@ -459,7 +426,12 @@ $comments .= '</div>';
             "data" => $lead_data,
             "test" => Auth::user()->temple_id
         );
-        return response()->json($dataset);
+        ////////////////////////////////////////////////////////////////////////
+        // Create dataSet object
+        // END
+        ////////////////////////////////////////////////////////////////////////
+
+        return response()->json($dataset); // return  Response as Json object
     }
 
 
