@@ -259,6 +259,40 @@
         return true;
     }
 
+
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// CHECK IMAGE URL ////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function isValidImage(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+async function chooseValidImage(urlA, urlB) {
+  const isValidA = await isValidImage(urlA);
+  const isValidB = await isValidImage(urlB);
+  let source = ""
+  if (isValidA) {
+    source = urlA;
+  } else if (isValidB) {
+     source = urlB;
+  } else {
+    source = ""
+  }
+  
+  return source;
+  
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////////////////////////
+
     function formDataLoad(e, thisId) {
         thisId.attr('disabled', false);
         id = thisId.attr('user_id')
@@ -276,7 +310,7 @@
                 "user_id": thisId.attr('user_id'),
                 "lead_id": thisId.attr('lead_id')
             },
-            success: function(userResponse) {
+            success: async function(userResponse) {
                 thisId.attr('disabled', false);
                 $('.loader').hide();
                 $('#tabNav .nav-link').removeClass('active')
@@ -569,8 +603,14 @@
                     const imageElement = imageData[f];
                     if (imageElement.photo_status == "active" || imageElement
                         .photo_status == "pending") {
+
+                        const urlA = `https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/${imageElement.photo_url}`;
+                        const urlB = `https://makeajodi.s3.amazonaws.com/uploads/${imageElement.photo_url}`;
+                        const source = await chooseValidImage(urlA,urlB);
+
                         photoHtml += `<div class="mb-3 col-md-3 p-1 text-center imageDiv${userResponse.id}${f}" id="img${imageElement.id}"'>
-                                <img src="https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/${imageElement.photo_url}" class="w-100 rounded">
+                                <img src=${source} class="w-100 rounded">
+
                                 <button class="btn btn-sm btn-warning btnDelPic" userId="${userResponse.id}" indexPic="${imageElement.id}">Delete</button>
                             </div>`;
                     }

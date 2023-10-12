@@ -318,7 +318,7 @@ class saveApproValController extends Controller
         // $p = Storage::disk('s3')->put('uploads/' . $imageName, $image, 'public');
         if (Storage::disk('s3')->put('uploads/' . $imageName, $image, 'public')) {
             if ($id = userPhoto::saveUserImage($imageName, $request->user_id, 'active', Auth::user()->id, Auth::user()->id)) {
-                return  ['path' => 'https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/' . $imageName, 'id' => $id, 'user_id' => Auth::user()->id];
+                return  ['path' => 'https://makeajodi.s3.amazonaws.com/uploads/' . $imageName, 'id' => $id, 'user_id' => Auth::user()->id];
             }
         }
         return 'Somthing went Wrong';
